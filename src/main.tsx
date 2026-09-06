@@ -17,6 +17,7 @@ import './promotion-everywhere.ts'
 import './cart-premium.ts'
 import './order-sync.ts'
 import './admin-premium.ts'
+import './admin-data-sync.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
