@@ -1,119 +1,68 @@
 import express from "express";
 import cors from "cors";
-import mysql from "mysql2/promise";
-import "dotenv/config";
+import { DatabaseSync } from "node:sqlite";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT) || 3306,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const dbPath = path.join(__dirname, "osrah.db");
+const db = new DatabaseSync(dbPath);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT DEFAULT '',
+    price REAL NOT NULL,
+    stock INTEGER NOT NULL DEFAULT 0,
+    category TEXT DEFAULT '',
+    image_url TEXT DEFAULT '',
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+
+console.log(`SQLite database ready: ${dbPath}`);
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "OSRAH COSMETIQUES Backend is running 🚀",
+    database: "SQLite connected ✅",
+  });
 });
 
-async function initDatabase() {
+app.get("/api/products", (req, res) => {
   try {
-    await db.query(`
-      CREATE TABLE IF NOT EXISTS products (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(150) NOT NULL,
-        description TEXT,
-        price DECIMAL(10, 2) NOT NULL,
-        stock INT NOT NULL DEFAULT 0,
-        category VARCHAR(100),
-        image_url TEXT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-      )
-    `);
-
-    console.log("Table products prête ✅");
-  } catch (error) {
-    console.error("Erreur création table products:", error.message);
-  }
-}
-
-app.get("/", async (req, res) => {
-  try {
-    await db.query("SELECT 1 AS connected");
-
-    res.json({
-      message: "OSRAH COSMETIQUES Backend is running 🚀",
-      database: "MySQL connected ✅",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Backend running mais MySQL connection failed ❌",
-      error: error.message,
-    });
-  }
-});
-
-// Afficher tous les produits
-app.get("/api/products", async (req, res) => {
-  try {
-    const [products] = await db.query(
-      "SELECT * FROM products ORDER BY id DESC"
-    );
-
+    const products = db.prepare("SELECT * FROM products ORDER BY id DESC").all();
     res.json(products);
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de récupération des produits",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Erreur lors de récupération des produits", error: error.message });
   }
 });
 
-// Afficher un produit
-app.get("/api/products/:id", async (req, res) => {
+app.get("/api/products/:id", (req, res) => {
   try {
-    const [rows] = await db.query(
-      "SELECT * FROM products WHERE id = ?",
-      [req.params.id]
-    );
-
-    if (rows.length === 0) {
-      return res.status(404).json({ message: "Produit introuvable" });
-    }
-
-    res.json(rows[0]);
+    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
+    if (!product) return res.status(404).json({ message: "Produit introuvable" });
+    res.json(product);
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de récupération du produit",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Erreur lors de récupération du produit", error: error.message });
   }
 });
 
-// Ajouter un produit
-app.post("/api/products", async (req, res) => {
+app.post("/api/products", (req, res) => {
   try {
-    const {
-      name,
-      description = "",
-      price,
-      stock = 0,
-      category = "",
-      image_url = "",
-    } = req.body;
+    const { name, description = "", price, stock = 0, category = "", image_url = "" } = req.body;
 
     if (!name || price === undefined || price === null || price === "") {
-      return res.status(400).json({
-        message: "Le nom et le prix sont obligatoires",
-      });
+      return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
     }
 
     const numericPrice = Number(price);
@@ -122,52 +71,29 @@ app.post("/api/products", async (req, res) => {
     if (Number.isNaN(numericPrice) || numericPrice < 0) {
       return res.status(400).json({ message: "Prix invalide" });
     }
-
     if (!Number.isInteger(numericStock) || numericStock < 0) {
       return res.status(400).json({ message: "Stock invalide" });
     }
 
-    const [result] = await db.query(
-      `INSERT INTO products
-       (name, description, price, stock, category, image_url)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [name.trim(), description, numericPrice, numericStock, category, image_url]
-    );
+    const result = db.prepare(`
+      INSERT INTO products (name, description, price, stock, category, image_url)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `).run(name.trim(), description, numericPrice, numericStock, category, image_url);
 
-    const [rows] = await db.query(
-      "SELECT * FROM products WHERE id = ?",
-      [result.insertId]
-    );
-
-    res.status(201).json({
-      message: "Produit ajouté avec succès ✅",
-      product: rows[0],
-    });
+    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(result.lastInsertRowid);
+    res.status(201).json({ message: "Produit ajouté avec succès ✅", product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de l'ajout du produit",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Erreur lors de l'ajout du produit", error: error.message });
   }
 });
 
-// Modifier un produit
-app.put("/api/products/:id", async (req, res) => {
+app.put("/api/products/:id", (req, res) => {
   try {
-    const {
-      name,
-      description = "",
-      price,
-      stock = 0,
-      category = "",
-      image_url = "",
-    } = req.body;
+    const { name, description = "", price, stock = 0, category = "", image_url = "" } = req.body;
 
     if (!name || price === undefined || price === null || price === "") {
-      return res.status(400).json({
-        message: "Le nom et le prix sont obligatoires",
-      });
+      return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
     }
 
     const numericPrice = Number(price);
@@ -176,73 +102,38 @@ app.put("/api/products/:id", async (req, res) => {
     if (Number.isNaN(numericPrice) || numericPrice < 0) {
       return res.status(400).json({ message: "Prix invalide" });
     }
-
     if (!Number.isInteger(numericStock) || numericStock < 0) {
       return res.status(400).json({ message: "Stock invalide" });
     }
 
-    const [result] = await db.query(
-      `UPDATE products
-       SET name = ?, description = ?, price = ?, stock = ?, category = ?, image_url = ?
-       WHERE id = ?`,
-      [
-        name.trim(),
-        description,
-        numericPrice,
-        numericStock,
-        category,
-        image_url,
-        req.params.id,
-      ]
-    );
+    const result = db.prepare(`
+      UPDATE products
+      SET name = ?, description = ?, price = ?, stock = ?, category = ?, image_url = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).run(name.trim(), description, numericPrice, numericStock, category, image_url, req.params.id);
 
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Produit introuvable" });
-    }
+    if (result.changes === 0) return res.status(404).json({ message: "Produit introuvable" });
 
-    const [rows] = await db.query(
-      "SELECT * FROM products WHERE id = ?",
-      [req.params.id]
-    );
-
-    res.json({
-      message: "Produit modifié avec succès ✅",
-      product: rows[0],
-    });
+    const product = db.prepare("SELECT * FROM products WHERE id = ?").get(req.params.id);
+    res.json({ message: "Produit modifié avec succès ✅", product });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de la modification du produit",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Erreur lors de la modification du produit", error: error.message });
   }
 });
 
-// Supprimer un produit
-app.delete("/api/products/:id", async (req, res) => {
+app.delete("/api/products/:id", (req, res) => {
   try {
-    const [result] = await db.query(
-      "DELETE FROM products WHERE id = ?",
-      [req.params.id]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Produit introuvable" });
-    }
-
+    const result = db.prepare("DELETE FROM products WHERE id = ?").run(req.params.id);
+    if (result.changes === 0) return res.status(404).json({ message: "Produit introuvable" });
     res.json({ message: "Produit supprimé avec succès ✅" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de la suppression du produit",
-      error: error.message,
-    });
+    res.status(500).json({ message: "Erreur lors de la suppression du produit", error: error.message });
   }
 });
 
 const PORT = Number(process.env.PORT) || 5000;
-
-app.listen(PORT, async () => {
+app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
-  await initDatabase();
 });
