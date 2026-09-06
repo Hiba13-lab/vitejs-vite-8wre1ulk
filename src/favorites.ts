@@ -6,6 +6,15 @@ const read=():Favorite[]=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]'
 const write=(items:Favorite[])=>localStorage.setItem(KEY,JSON.stringify(items));
 const norm=(s:string)=>s.trim().toLowerCase();
 
+function syncHeaderBadge(count:number){
+ const headerButton=document.querySelector('.x-icons button:nth-child(2)') as HTMLButtonElement|null;
+ if(!headerButton)return;
+ const label=headerButton.querySelector('small'); if(label)label.textContent='Favoris';
+ let badge=headerButton.querySelector('.fav-header-badge') as HTMLElement|null;
+ if(!badge){badge=document.createElement('b');badge.className='fav-header-badge';headerButton.appendChild(badge)}
+ badge.textContent=String(count);
+}
+
 function syncHearts(){
  const favs=read();
  document.querySelectorAll('.x-grid article').forEach(card=>{
@@ -17,8 +26,7 @@ function syncHearts(){
   heart.textContent=saved?'♥':'♡';
   heart.setAttribute('aria-label',saved?'Retirer des favoris':'Ajouter aux favoris');
  });
- const headerFav=document.querySelector('.x-icons button:nth-child(2) small');
- if(headerFav)headerFav.textContent=`Favoris (${favs.length})`;
+ syncHeaderBadge(favs.length);
 }
 
 function productFromCard(card:Element):Favorite|null{
@@ -66,7 +74,7 @@ document.addEventListener('click',e=>{
   write(favs);
   heart.classList.toggle('saved-favorite',saved);
   heart.textContent=saved?'♥':'♡';
-  const headerFav=document.querySelector('.x-icons button:nth-child(2) small');if(headerFav)headerFav.textContent=`Favoris (${favs.length})`;
+  syncHeaderBadge(favs.length);
   return;
  }
  const headerButton=target?.closest('.x-icons button:nth-child(2)');
