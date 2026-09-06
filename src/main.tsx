@@ -11,6 +11,7 @@ import './men-page.ts'
 import './favorites.ts'
 import './perfume-page.ts'
 import './payment-extra.ts'
+import './promotion-everywhere.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
