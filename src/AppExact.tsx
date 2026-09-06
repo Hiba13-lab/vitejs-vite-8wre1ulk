@@ -14,6 +14,10 @@ const SAVON="https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a
 const BRONZE="https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946";
 const SPF50="https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946";
 const HAIR="https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946";
+const BLOND_SHAMPOO="https://osrahcosmetics.ma/cdn/shop/files/1-15_b30a107d-5f7f-4d16-b4a9-9bffcaad8fdf.webp?v=1769269984&width=1946";
+const BLOND_MASK="https://osrahcosmetics.ma/cdn/shop/files/1-18.webp?v=1769267021&width=1946";
+const COLOR_SHAMPOO="https://osrahcosmetics.ma/cdn/shop/files/1-18_b1b925f0-f60a-4d03-937b-2109607292e7.webp?v=1769269889&width=1946";
+const GEL_CLEAN="https://osrahcosmetics.ma/cdn/shop/files/1-09_220c1547-762f-4587-807d-27152c74edba.webp?v=1769454500&width=1946";
 
 const featured:Product[]=[
  {id:101,name:"Brume parfumée",description:"Brume parfumée OSRAH pour une sensation fraîche et délicate.",price:69,stock:20,category:"Parfums",image:BRUME},
@@ -24,6 +28,14 @@ const featured:Product[]=[
  {id:106,name:"Huile de bronzage",description:"Huile de bronzage pailletée OSRAH.",price:79,stock:15,category:"Solaire",image:BRONZE},
  {id:107,name:"Lait solaire SPF 30",description:"Protection UVA/UVB pour la routine solaire.",price:79,stock:16,category:"Solaire",image:HERO},
  {id:108,name:"Écran solaire SPF 50+",description:"Écran solaire teinté haute protection.",price:129,stock:12,category:"Solaire",image:SPF50},
+ {id:109,name:"Huile végétale Amande douce",description:"Huile végétale nourrissante à l'amande douce.",price:29,stock:20,category:"Corps",image:HERO},
+ {id:110,name:"Masques Terre d'Arômes",description:"Sélection de masques purifiants et adoucissants Terre d'Arômes.",price:59,stock:14,category:"Visage",image:GOMMAGE},
+ {id:111,name:"Masque Blond Lumière",description:"Masque H-Therapy pour cheveux blonds, douceur et brillance.",price:160,stock:12,category:"Cheveux",image:BLOND_MASK},
+ {id:112,name:"Shampooing Blond Lumière",description:"Shampooing H-Therapy pour raviver les blonds froids.",price:140,stock:15,category:"Cheveux",image:BLOND_SHAMPOO},
+ {id:113,name:"Shampooing Couleur Magnétique",description:"Shampooing H-Therapy fixateur de couleur.",price:140,stock:15,category:"Cheveux",image:COLOR_SHAMPOO},
+ {id:114,name:"Gel nettoyant visage",description:"Gel nettoyant doux pour peaux normales à sèches.",price:79,stock:18,category:"Visage",image:GEL_CLEAN},
+ {id:115,name:"Savon aux extraits AHA & Tea Tree",description:"Savon visage éclaircissant et anti-imperfections.",price:39,stock:22,category:"Visage",image:SAVON},
+ {id:116,name:"Lotion micellaire",description:"Lotion micellaire Subliderm pour démaquiller et nettoyer.",price:72,stock:18,category:"Visage",image:HERO},
 ];
 
 const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
