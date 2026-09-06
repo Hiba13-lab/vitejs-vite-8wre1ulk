@@ -1,6 +1,13 @@
 const SOLAR_FALLBACK = '/spf50.svg';
+const HERO_SERUM = '/osrah-serum-clean.svg';
 
-function fixSolarImages() {
+function fixSiteImages() {
+  const heroImg = document.querySelector<HTMLImageElement>('.x-hero .visual img');
+  if (heroImg && heroImg.getAttribute('src') !== HERO_SERUM) {
+    heroImg.src = HERO_SERUM;
+    heroImg.alt = 'Sérum visage OSRAH à l’acide hyaluronique';
+  }
+
   document.querySelectorAll<HTMLImageElement>('img').forEach(img => {
     const src = img.getAttribute('src') || '';
     const alt = (img.getAttribute('alt') || '').toLowerCase();
@@ -22,8 +29,8 @@ function fixSolarImages() {
   });
 }
 
-const observer = new MutationObserver(fixSolarImages);
+const observer = new MutationObserver(fixSiteImages);
 observer.observe(document.documentElement, { childList: true, subtree: true });
-window.addEventListener('load', fixSolarImages);
-window.setTimeout(fixSolarImages, 100);
-window.setTimeout(fixSolarImages, 700);
+window.addEventListener('load', fixSiteImages);
+window.setTimeout(fixSiteImages, 100);
+window.setTimeout(fixSiteImages, 700);
