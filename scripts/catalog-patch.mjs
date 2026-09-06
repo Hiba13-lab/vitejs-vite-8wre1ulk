@@ -3,6 +3,10 @@ import fs from "node:fs";
 const appPath = new URL("../src/App.tsx", import.meta.url);
 let code = fs.readFileSync(appPath, "utf8");
 
+if (!code.includes('import "./catalog.css";')) {
+  code = code.replace('import "./premium.css";', 'import "./premium.css";\nimport "./catalog.css";');
+}
+
 if (!code.includes('const [selectedCategory, setSelectedCategory]')) {
   code = code.replace(
     '  const [search, setSearch] = useState("");',
@@ -28,7 +32,6 @@ if (!code.includes('className="catalog-toolbar"')) {
   );
 }
 
-// Make the category buttons underneath the section title functional too.
 code = code.replace(
   `<div className="category-buttons">\n\n            <button>Tous</button>\n            <button>Soin visage</button>\n            <button>Cheveux</button>\n            <button>Corps et douche</button>\n            <button>Coffrets</button>\n\n          </div>`,
   `<div className="category-buttons">\n            <button onClick={() => goToCategory("Tous")}>Tous</button>\n            <button onClick={() => goToCategory("Soin visage")}>Soin visage</button>\n            <button onClick={() => goToCategory("Cheveux")}>Cheveux</button>\n            <button onClick={() => goToCategory("Corps et douche")}>Corps et douche</button>\n            <button onClick={() => goToCategory("Coffrets")}>Coffrets</button>\n          </div>`
