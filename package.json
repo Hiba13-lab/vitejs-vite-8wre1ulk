@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "restore-ui": "node scripts/patch-app.mjs && node scripts/catalog-patch.mjs && node scripts/auth-ui-patch.mjs",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
