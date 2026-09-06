@@ -32,7 +32,7 @@ function syncHearts(){
 function productFromCard(card:Element):Favorite|null{
  const name=card.querySelector('h3')?.textContent?.trim();
  const image=(card.querySelector('.pimg img') as HTMLImageElement|null)?.src;
- const price=card.querySelector('.info>b')?.textContent?.trim();
+ const price=card.querySelector('.promo-price span')?.textContent?.trim()||card.querySelector('.info>b')?.textContent?.trim();
  const brand=card.querySelector('.info>small')?.textContent?.trim()||'OSRAH';
  if(!name||!image||!price)return null;
  return {name,image,price,brand};
