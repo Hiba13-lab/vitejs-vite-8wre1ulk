@@ -1,0 +1,71 @@
+import React, { useEffect, useMemo, useState } from "react";
+import "./exact.css";
+
+type Product = { id:number; name:string; description:string; price:number; stock:number; category:string; image:string };
+type ApiProduct = { id:number; name:string; description:string; price:number; stock:number; category:string; image_url?:string };
+type Role = "none"|"admin"|"client";
+type Page = "login"|"dashboard"|"shop"|"detail"|"payment"|"confirmation";
+
+const HERO="https://osrahcosmetics.ma/cdn/shop/files/69ff4d88-a340-4379-b528-b7f3d5e398fe.png?v=1780763528&width=1254";
+const BRUME="https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946";
+const GEL="https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946";
+const GOMMAGE="https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946";
+const SAVON="https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a4e-ef19a78db909.webp?v=1769275507&width=1946";
+const BRONZE="https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946";
+const SPF50="https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946";
+const HAIR="https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946";
+
+const featured:Product[]=[
+ {id:101,name:"Brume parfumée",description:"Brume parfumée OSRAH pour une sensation fraîche et délicate.",price:69,stock:20,category:"Parfums",image:BRUME},
+ {id:102,name:"Gel douche Fleur d'Oranger",description:"Gel douche parfumé à la fleur d'oranger.",price:55,stock:25,category:"Corps",image:GEL},
+ {id:103,name:"Lait corporel",description:"Lait corps hydratant pour une peau douce.",price:57,stock:20,category:"Corps",image:HERO},
+ {id:104,name:"Gommage corps sucre rose",description:"Gommage au sucre rose Terre d'Arômes.",price:49,stock:18,category:"Corps",image:GOMMAGE},
+ {id:105,name:"Savon noir Eucalyptus",description:"Savon noir traditionnel à l'eucalyptus.",price:39,stock:18,category:"Corps",image:SAVON},
+ {id:106,name:"Huile de bronzage",description:"Huile de bronzage pailletée OSRAH.",price:79,stock:15,category:"Solaire",image:BRONZE},
+ {id:107,name:"Lait solaire SPF 30",description:"Protection UVA/UVB pour la routine solaire.",price:79,stock:16,category:"Solaire",image:HERO},
+ {id:108,name:"Écran solaire SPF 50+",description:"Écran solaire teinté haute protection.",price:129,stock:12,category:"Solaire",image:SPF50},
+];
+
+const normalize=(s:string)=>s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+
+export default function AppExact(){
+ const [role,setRole]=useState<Role>("none");
+ const [page,setPage]=useState<Page>("login");
+ const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [error,setError]=useState("");
+ const [apiProducts,setApiProducts]=useState<Product[]>([]); const [search,setSearch]=useState(""); const [category,setCategory]=useState("Accueil");
+ const [cart,setCart]=useState<Product[]>([]); const [favorites,setFavorites]=useState<number[]>([]); const [selected,setSelected]=useState<Product|null>(null); const [toast,setToast]=useState("");
+ const [payMethod,setPayMethod]=useState("Carte bancaire");
+
+ useEffect(()=>{fetch("http://localhost:5000/api/products").then(r=>r.ok?r.json():Promise.reject()).then((d:ApiProduct[])=>setApiProducts(d.map(p=>({...p,image:p.image_url||HAIR})))).catch(()=>{});},[]);
+ useEffect(()=>{if(!toast)return;const t=setTimeout(()=>setToast(""),2200);return()=>clearTimeout(t);},[toast]);
+ const login=(e:React.FormEvent)=>{e.preventDefault();setError("");if(email==="admin@osrah.ma"&&password==="osrah2026"){setRole("admin");setPage("dashboard");return;}if(email==="client@osrah.ma"&&password==="client2026"){setRole("client");setPage("shop");return;}setError("Email ou mot de passe incorrect.");};
+ const add=(p:Product)=>{setCart(c=>[...c,p]);setToast(`${p.name} ajouté au panier`);};
+ const open=(p:Product)=>{setSelected(p);setPage("detail");window.scrollTo(0,0);};
+ const allProducts=useMemo(()=>[...featured,...apiProducts.filter(p=>!featured.some(f=>normalize(f.name)===normalize(p.name)))],[apiProducts]);
+ const results=useMemo(()=>{const q=normalize(search.trim());let list=q?allProducts.filter(p=>normalize(`${p.name} ${p.description} ${p.category}`).includes(q)):featured;if(category==="Visage")list=allProducts.filter(p=>normalize(p.category).includes("visage"));if(category==="Corps")list=allProducts.filter(p=>normalize(p.category).includes("corps"));if(category==="Cheveux")list=allProducts.filter(p=>normalize(p.category).includes("cheveux"));if(category==="Solaire")list=allProducts.filter(p=>normalize(p.category).includes("solaire"));if(category==="Parfums")list=allProducts.filter(p=>normalize(p.category).includes("parfum"));if(category==="Nouveautés")list=allProducts.slice(-8);if(category==="Promotions")list=allProducts.filter(p=>p.price<=99);return list;},[allProducts,search,category]);
+ const nav=(c:string)=>{setCategory(c);setSearch("");setTimeout(()=>document.getElementById("products")?.scrollIntoView({behavior:"smooth"}),40);};
+ const Logo=()=> <div className="x-logo"><b>O<span>S</span>RAH</b><em>cosmétiques</em><small>BEAUTÉ NATURELLE, CONFIANCE RÉELLE</small></div>;
+ const Toast=()=>toast?<div className="x-toast"><b>✓</b><span><strong>Produit ajouté</strong><small>{toast}</small></span></div>:null;
+
+ if(page==="login")return <div className="x-login"><div className="x-login-card"><Logo/><h1>Bienvenue</h1><p>Connectez-vous à votre espace OSRAH</p><form onSubmit={login}><label>Email</label><input type="email" value={email} onChange={e=>setEmail(e.target.value)}/><label>Mot de passe</label><input type="password" value={password} onChange={e=>setPassword(e.target.value)}/>{error&&<span className="x-error">{error}</span>}<button>SE CONNECTER</button></form><small>Admin: admin@osrah.ma / osrah2026<br/>Client: client@osrah.ma / client2026</small></div></div>;
+
+ if(role==="admin")return <div className="x-admin"><aside><Logo/><button onClick={()=>setPage("dashboard")}>🏠 Dashboard</button><button>🧴 Produits</button><button>➕ Ajouter produit</button><button>📦 Commandes</button><button>👥 Clients</button><button>📊 Statistiques</button><button className="last" onClick={()=>{setRole("none");setPage("login")}}>Déconnexion admin</button></aside><main><header><div><h1>Dashboard</h1><p>Bienvenue dans votre espace de gestion Osrah Cosmétiques.</p></div><button onClick={()=>{setRole("client");setPage("shop")}}>Voir espace client</button></header><section className="x-stats"><div><span>Produits</span><b>{allProducts.length}</b></div><div><span>Commandes</span><b>3</b></div><div><span>Chiffre d'affaires</span><b>472 DH</b></div><div><span>Clients</span><b>24</b></div></section></main></div>;
+
+ if(page==="detail"&&selected)return <><Toast/><div className="x-detail"><header><button onClick={()=>setPage("shop")}>← Retour</button><Logo/><button onClick={()=>setPage("payment")}>🛍 {cart.length}</button></header><main><div className="photo"><img src={selected.image}/></div><div><small>{selected.category}</small><h1>{selected.name}</h1><h2>{selected.price.toFixed(2)} DH</h2><p>{selected.description}</p><b>✓ En stock</b><div className="actions"><button onClick={()=>add(selected)}>AJOUTER AU PANIER</button><button onClick={()=>{add(selected);setPage("payment")}}>ACHETER MAINTENANT</button></div></div></main></div></>;
+
+ const subtotal=cart.reduce((s,p)=>s+p.price,0); const shipping=subtotal>=300||subtotal===0?0:30; const total=subtotal+shipping;
+ if(page==="payment")return <div className="x-pay"><header><button onClick={()=>setPage("shop")}>← Boutique</button><Logo/><span>🔒 Paiement fiable</span></header><main><section><h2>Vos articles ({cart.length})</h2>{cart.map((p,i)=><article key={`${p.id}-${i}`}><img src={p.image}/><div><small>{p.category}</small><h3>{p.name}</h3><b>{p.price.toFixed(2)} DH</b></div><button onClick={()=>setCart(c=>c.filter((_,x)=>x!==i))}>✕</button></article>)}</section><aside><h2>Résumé de votre commande</h2><p><span>Sous-total</span><b>{subtotal.toFixed(2)} DH</b></p><p><span>Livraison</span><b>{shipping?`${shipping} DH`:"Gratuite"}</b></p><p className="total"><span>Total TTC</span><b>{total.toFixed(2)} DH</b></p><h3>Moyen de paiement</h3>{["Carte bancaire","PayPal","Paiement à la livraison"].map(m=><button key={m} className={payMethod===m?"active":""} onClick={()=>setPayMethod(m)}>{m}</button>)}<button className="confirm" disabled={!cart.length} onClick={()=>setPage("confirmation")}>CONFIRMER LE PAIEMENT</button></aside></main></div>;
+ if(page==="confirmation")return <div className="x-confirm"><div><b>✓</b><h1>Commande confirmée</h1><p>Votre commande OSRAH a été enregistrée avec succès.</p><button onClick={()=>{setCart([]);setPage("shop")}}>RETOURNER À LA BOUTIQUE</button></div></div>;
+
+ return <><Toast/><div className="x-store">
+  <div className="x-top"><span>🚚 Livraison partout au Maroc</span><span>☎ +212 600 123 456</span><span>◇ Produits authentiques</span><span>🎧 Service client 7j/7</span></div>
+  <header className="x-head"><Logo/><div className="x-search"><input value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>e.key==="Enter"&&nav("Accueil")} placeholder="Rechercher un produit, une catégorie..."/><button onClick={()=>nav("Accueil")}>⌕</button></div><div className="x-icons"><button>♙<small>Espace client</small></button><button onClick={()=>setToast(`${favorites.length} favori(s)`)}>♡<small>Favoris</small></button><button className="bag" onClick={()=>setPage("payment")}>🛍<b>{cart.length}</b><small>Panier</small></button></div></header>
+  <nav className="x-nav">{["Accueil","Visage","Corps","Cheveux","Solaire","Parfums","Nos marques","Nouveautés","Promotions"].map(n=><button className={category===n?"on":""} key={n} onClick={()=>nav(n)}>{n}</button>)}</nav>
+  <section className="x-hero"><div className="copy"><small>OSRAH COSMETICS</small><h1>Révélez votre<br/><em>beauté naturelle</em></h1><p>Des soins authentiques pour une peau et des cheveux en pleine santé</p><button onClick={()=>nav("Accueil")}>Découvrir nos produits →</button></div><div className="visual"><img src={HERO}/><div className="script">Prenez<br/>soin de vous<br/>avec Osrah ♡</div></div></section>
+  <section className="x-cats">{[["Visage",GOMMAGE],["Corps",SAVON],["Cheveux",HAIR],["Solaire",SPF50],["Parfums",BRUME],["Nos marques",HERO],["Nouveautés",HERO],["Promotions",BRONZE]].map(([n,img])=><button key={n} onClick={()=>nav(n)}><span><img src={img}/></span><b>{n}</b></button>)}</section>
+  <section className="x-promos"><button onClick={()=>nav("Nouveautés")}><img src={HERO}/><div><small>NOUVEL ARRIVAGE</small><h2>Les nouveautés<br/>de la semaine</h2><span>Découvrir →</span></div></button><button onClick={()=>nav("Promotions")}><img src={GOMMAGE}/><strong>JUSQU'À<br/><b>-30%</b></strong><div><small>SOLDES</small><h2>Profitez de nos<br/>offres spéciales</h2><span>Voir les promotions →</span></div></button></section>
+  <section className="x-products" id="products"><div className="title"><h2>{category==="Accueil"&&!search?"Nos produits phares":search?`Résultats pour “${search}”`:category}</h2><button onClick={()=>{setCategory("Accueil");setSearch("")}}>Voir tous les produits →</button></div><div className="x-grid">{results.map(p=><article key={p.id}><button className={`fav ${favorites.includes(p.id)?"liked":""}`} onClick={()=>setFavorites(f=>f.includes(p.id)?f.filter(x=>x!==p.id):[...f,p.id])}>♡</button><div className="pimg" onClick={()=>open(p)}><img src={p.image}/></div><div className="info"><h3 onClick={()=>open(p)}>{p.name}</h3><small>OSRAH</small><b>{p.price.toFixed(0)} DH</b><button onClick={()=>add(p)}>Ajouter au panier</button></div></article>)}</div></section>
+  <section className="x-loyal"><div><h2>GAGNEZ À CHAQUE ACHAT</h2><h3>CUMULEZ DES POINTS,<br/>PROFITEZ D’AVANTAGES EXCLUSIFS<br/>ET DE CADEAUX.</h3></div><div className="benefits"><span>★ <b>Fidélité récompensée</b></span><span>🎁 <b>Offres exclusives</b></span><span>♡ <b>Surprises toute l'année</b></span></div><div className="cards"><div className="merci">OSRAH<br/><b>Merci</b><small>pour votre fidélité</small></div><div className="order">Merci pour votre commande<small>Cumulez vos points à chaque achat</small></div><span className="hand">🤲</span></div></section>
+  <footer><span>© 2026 Osrah Cosmetics. Tous droits réservés.</span><div>À propos &nbsp; | &nbsp; Contact &nbsp; | &nbsp; CGV &nbsp; | &nbsp; Politique de confidentialité</div><span>◎ ● ♪</span></footer>
+ </div></>;
+}
