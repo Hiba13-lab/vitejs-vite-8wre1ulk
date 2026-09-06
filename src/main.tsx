@@ -6,6 +6,7 @@ import './pack-detail.css'
 import './product-grid.css'
 import './pack-navigation.ts'
 import './site-fixes.ts'
+import './men-page.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
