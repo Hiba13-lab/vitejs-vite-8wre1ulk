@@ -4,6 +4,10 @@ function field(name:string,label:string,placeholder:string,type='text',extra='')
  return `<label>${label}<input data-pay-field="${name}" type="${type}" placeholder="${placeholder}" ${extra}></label>`;
 }
 
+function deliveryFields(){
+ return `<h4>Informations de livraison</h4>${field('fullName','Nom complet','Votre nom complet')}${field('phone','Numéro de téléphone','06 XX XX XX XX','tel')}${field('address','Adresse','Quartier, rue, numéro...')}${field('city','Ville','Votre ville')}`;
+}
+
 function renderExtra(){
  const aside=document.querySelector('.x-pay aside') as HTMLElement|null;
  if(!aside)return;
@@ -25,10 +29,10 @@ function renderExtra(){
  box.dataset.method=method;
 
  if(method==='Paiement à la livraison'){
-  box.innerHTML=`<h4>Informations de livraison</h4>${field('fullName','Nom complet','Votre nom complet')}${field('phone','Numéro de téléphone','06 XX XX XX XX','tel')}${field('address','Adresse','Quartier, rue, numéro...')}${field('city','Ville','Votre ville')}<div class="pay-extra-error">Veuillez remplir toutes les informations de livraison.</div>`;
+  box.innerHTML=`${deliveryFields()}<div class="pay-extra-error">Veuillez remplir toutes les informations de livraison.</div>`;
   (confirm as HTMLButtonElement).textContent='CONFIRMER LA COMMANDE';
  }else{
-  box.innerHTML=`<h4>Informations de la carte</h4>${field('cardName','Nom sur la carte','Nom et prénom')}${field('cardNumber','Numéro de carte','1234 5678 9012 3456','text','inputmode="numeric" maxlength="19"')}<div class="pay-extra-row">${field('expiry','Date d’expiration','MM/AA','text','maxlength="5"')}${field('cvv','CVV','123','password','inputmode="numeric" maxlength="4"')}</div><div class="pay-extra-note">Paiement de démonstration uniquement — aucune transaction réelle n’est effectuée.</div><div class="pay-extra-error">Veuillez remplir toutes les informations de la carte.</div>`;
+  box.innerHTML=`${deliveryFields()}<h4>Informations de la carte</h4>${field('cardName','Nom sur la carte','Nom et prénom')}${field('cardNumber','Numéro de carte','1234 5678 9012 3456','text','inputmode="numeric" maxlength="19"')}<div class="pay-extra-row">${field('expiry','Date d’expiration','MM/AA','text','maxlength="5"')}${field('cvv','CVV','123','password','inputmode="numeric" maxlength="4"')}</div><div class="pay-extra-note">Paiement de démonstration uniquement — aucune transaction réelle n’est effectuée.</div><div class="pay-extra-error">Veuillez remplir les informations de livraison et de carte.</div>`;
   (confirm as HTMLButtonElement).textContent='CONFIRMER LE PAIEMENT';
  }
  confirm.before(box);
