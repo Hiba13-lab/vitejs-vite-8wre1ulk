@@ -5,19 +5,25 @@ const KEY='osrah_favorites';
 const read=():Favorite[]=>{try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}};
 const write=(items:Favorite[])=>localStorage.setItem(KEY,JSON.stringify(items));
 const norm=(s:string)=>s.trim().toLowerCase();
+let syncing=false;
 
 function syncHearts(){
- const favs=read();
- document.querySelectorAll('.x-grid article').forEach(card=>{
-  const name=card.querySelector('h3')?.textContent?.trim()||'';
-  const heart=card.querySelector('.fav') as HTMLElement|null;
-  if(!heart)return;
-  const saved=favs.some(f=>norm(f.name)===norm(name));
-  heart.classList.toggle('saved-favorite',saved);
-  heart.setAttribute('aria-label',saved?'Retirer des favoris':'Ajouter aux favoris');
- });
- const headerFav=document.querySelector('.x-icons button:nth-child(2) small');
- if(headerFav) headerFav.textContent=`Favoris (${favs.length})`;
+ if(syncing)return; syncing=true;
+ try{
+  const favs=read();
+  document.querySelectorAll('.x-grid article').forEach(card=>{
+   const name=card.querySelector('h3')?.textContent?.trim()||'';
+   const heart=card.querySelector('.fav') as HTMLElement|null;
+   if(!heart)return;
+   const saved=favs.some(f=>norm(f.name)===norm(name));
+   heart.classList.toggle('saved-favorite',saved);
+   const label=saved?'Retirer des favoris':'Ajouter aux favoris';
+   if(heart.getAttribute('aria-label')!==label)heart.setAttribute('aria-label',label);
+  });
+  const headerFav=document.querySelector('.x-icons button:nth-child(2) small');
+  const wanted=`Favoris (${favs.length})`;
+  if(headerFav&&headerFav.textContent!==wanted)headerFav.textContent=wanted;
+ }finally{syncing=false}
 }
 
 function productFromCard(card:Element):Favorite|null{
@@ -56,7 +62,6 @@ function showFavorites(){
 function closeFavorites(){
  document.querySelector('.favorites-page')?.remove();
  document.querySelectorAll('.favorites-hidden').forEach(el=>el.classList.remove('favorites-hidden'));
- window.scrollTo({top:0,behavior:'smooth'});
  syncHearts();
 }
 
@@ -68,7 +73,7 @@ document.addEventListener('click',e=>{
   const product=productFromCard(card); if(!product)return;
   const favs=read(); const index=favs.findIndex(f=>norm(f.name)===norm(product.name));
   if(index>=0) favs.splice(index,1); else favs.push(product);
-  write(favs); setTimeout(syncHearts,0); return;
+  write(favs); syncHearts(); return;
  }
  const headerButton=target?.closest('.x-icons button:nth-child(2)');
  if(headerButton){e.preventDefault();e.stopPropagation();showFavorites();}
@@ -76,5 +81,6 @@ document.addEventListener('click',e=>{
  if(navBtn){closeFavorites();}
 },true);
 
-new MutationObserver(syncHearts).observe(document.body,{childList:true,subtree:true});
-window.addEventListener('load',syncHearts);setTimeout(syncHearts,300);setTimeout(syncHearts,1000);
+window.addEventListener('load',syncHearts);
+setTimeout(syncHearts,300);
+setTimeout(syncHearts,1000);
