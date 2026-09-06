@@ -1,18 +1,39 @@
 .x-promos{gap:16px!important;padding:10px 1.5% 18px!important}
-.x-promos>button{height:300px!important;border:0!important;border-radius:18px!important;position:relative!important;overflow:hidden!important;display:block!important;text-align:left!important;padding:0!important;box-shadow:0 12px 30px rgba(81,25,47,.10)!important;transition:.2s ease!important;isolation:isolate!important}
+.x-promos>button{height:250px!important;border:0!important;border-radius:16px!important;position:relative!important;overflow:hidden!important;display:block!important;text-align:left!important;padding:0!important;background-repeat:no-repeat!important;box-shadow:0 10px 28px rgba(81,25,47,.08)!important;transition:.2s ease!important}
 .x-promos>button>*{visibility:hidden!important}
-.x-promos>button:first-child{background:linear-gradient(105deg,#faeee6 0%,#f8dfdc 100%)!important}
-.x-promos>button:nth-child(2){background:linear-gradient(105deg,#f9e3e8 0%,#f4cbd4 100%)!important}
-.x-promos>button::before{visibility:visible!important;position:absolute!important;z-index:5!important;white-space:pre-line!important;left:4.5%!important;top:28px!important;width:43%!important;color:#4b1028!important;font-family:Georgia,serif!important;font-size:34px!important;line-height:1.02!important;font-weight:600!important}
-.x-promos>button:first-child::before{content:'PACK ROUTINE BEAUTÉ\A Une peau éclatante\A au quotidien\A\A Le pack idéal pour une peau nette,\A hydratée et lumineuse.'!important}
-.x-promos>button:nth-child(2)::before{content:'PACK SOIN & BIEN-ÊTRE\A Prenez soin\A de vous\A\A Un rituel complet pour les cheveux,\A la peau et le bien-être au naturel.'!important}
-.x-promos>button::after{visibility:visible!important;position:absolute!important;z-index:6!important;left:4.5%!important;bottom:24px!important;background:#4b1028!important;color:#fff!important;border-radius:9px!important;padding:12px 20px!important;font-size:12px!important;font-weight:800!important;box-shadow:0 7px 16px rgba(75,16,40,.16)!important}
+
+/* Ici on affiche un PACK complet, pas plusieurs produits séparés */
+.x-promos>button:first-child{background-color:#f8e7e4!important;background-image:url('https://osrahcosmetics.ma/cdn/shop/files/WhatsAppImage2026-01-27at12.32.09.jpg?v=1769610198&width=1248')!important;background-size:48% auto!important;background-position:3% center!important}
+.x-promos>button:nth-child(2){background-color:#f7dce4!important;background-image:url('https://osrahcosmetics.ma/cdn/shop/files/4309dcea-8f26-4092-b7fd-a4af762f640e.png?v=1778452571&width=1122')!important;background-size:48% auto!important;background-position:3% center!important}
+
+.x-promos>button::before{visibility:visible!important;white-space:pre-line!important;position:absolute!important;left:54%!important;right:5%!important;top:34px!important;color:#4b1028!important;font-family:Georgia,serif!important;font-size:28px!important;line-height:1.08!important;font-weight:600!important;z-index:2!important}
+.x-promos>button:first-child::before{content:'PACK ROUTINE BEAUTÉ\A Une peau éclatante\A au quotidien'!important}
+.x-promos>button:nth-child(2)::before{content:'PACK SOIN & BIEN-ÊTRE\A Prenez soin\A de vous'!important}
+
+.x-promos>button::after{visibility:visible!important;position:absolute!important;left:54%!important;bottom:31px!important;background:#4b1028!important;color:#fff!important;border-radius:8px!important;padding:11px 19px!important;font-size:11px!important;font-weight:800!important;z-index:2!important}
 .x-promos>button:first-child::after{content:'Découvrir le pack →'!important}
-.x-promos>button:nth-child(2)::after{content:'Découvrir le pack →'!important}
-.x-promos>button:first-child{background-image:url('https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946'),linear-gradient(105deg,#faeee6 0%,#f8dfdc 100%)!important;background-repeat:no-repeat!important;background-size:150px auto,175px auto,190px auto,145px auto,100% 100%!important;background-position:56% 92%,69% 91%,82% 95%,94% 92%,center!important}
-.x-promos>button:nth-child(2){background-image:url('https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946'),url('https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a4e-ef19a78db909.webp?v=1769275507&width=1946'),linear-gradient(105deg,#f9e3e8 0%,#f4cbd4 100%)!important;background-repeat:no-repeat!important;background-size:155px auto,165px auto,185px auto,185px auto,100% 100%!important;background-position:57% 93%,70% 92%,82% 96%,94% 95%,center!important}
-.x-promos>button:first-child span,.x-promos>button:nth-child(2) span{visibility:hidden!important}
-.x-promos>button:hover{transform:translateY(-2px)!important;box-shadow:0 16px 36px rgba(81,25,47,.14)!important}
-@media(max-width:1100px){.x-promos>button{height:275px!important}.x-promos>button::before{font-size:28px!important;width:45%!important}.x-promos>button:first-child{background-size:125px auto,145px auto,160px auto,120px auto,100% 100%!important}.x-promos>button:nth-child(2){background-size:130px auto,140px auto,155px auto,155px auto,100% 100%!important}}
-@media(max-width:760px){.x-promos{grid-template-columns:1fr!important}.x-promos>button{height:300px!important}.x-promos>button::before{font-size:28px!important}.x-promos>button:first-child{background-size:135px auto,155px auto,170px auto,130px auto,100% 100%!important}.x-promos>button:nth-child(2){background-size:140px auto,150px auto,165px auto,165px auto,100% 100%!important}}
-@media(max-width:520px){.x-promos>button{height:390px!important}.x-promos>button::before{left:6%!important;top:22px!important;width:88%!important;font-size:24px!important}.x-promos>button::after{left:6%!important;bottom:18px!important}.x-promos>button:first-child{background-size:90px auto,105px auto,120px auto,85px auto,100% 100%!important;background-position:8% 78%,35% 78%,63% 82%,88% 79%,center!important}.x-promos>button:nth-child(2){background-size:95px auto,100px auto,115px auto,115px auto,100% 100%!important;background-position:7% 79%,34% 79%,62% 83%,88% 82%,center!important}}
+.x-promos>button:nth-child(2)::after{content:'Voir le pack →'!important}
+
+.x-promos>button:hover{transform:translateY(-2px)!important;box-shadow:0 14px 34px rgba(81,25,47,.13)!important}
+
+@media(max-width:1050px){
+  .x-promos>button{height:225px!important}
+  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:46% auto!important;background-position:2% center!important}
+  .x-promos>button::before{left:51%!important;font-size:23px!important}
+  .x-promos>button::after{left:51%!important}
+}
+
+@media(max-width:760px){
+  .x-promos{grid-template-columns:1fr!important}
+  .x-promos>button{height:240px!important}
+  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:47% auto!important;background-position:2% center!important}
+  .x-promos>button::before{left:52%!important;font-size:23px!important}
+  .x-promos>button::after{left:52%!important}
+}
+
+@media(max-width:500px){
+  .x-promos>button{height:225px!important}
+  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:48% auto!important;background-position:-3% center!important}
+  .x-promos>button::before{left:48%!important;right:3%!important;top:28px!important;font-size:18px!important}
+  .x-promos>button::after{left:48%!important;bottom:27px!important;padding:9px 12px!important;font-size:10px!important}
+}
