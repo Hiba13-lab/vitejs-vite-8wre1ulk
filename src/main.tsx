@@ -15,6 +15,7 @@ import './perfume-page.ts'
 import './payment-extra.ts'
 import './promotion-everywhere.ts'
 import './cart-premium.ts'
+import './order-sync.ts'
 import './admin-premium.ts'
 import AppExact from './AppExact.tsx'
 
