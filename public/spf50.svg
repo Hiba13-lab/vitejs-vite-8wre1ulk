@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420">
+  <rect width="420" height="420" fill="#f8edef"/>
+  <ellipse cx="210" cy="346" rx="95" ry="18" fill="#ead7dc"/>
+  <g transform="translate(135 42)">
+    <rect x="42" y="0" width="66" height="50" rx="14" fill="#f7f7f7" stroke="#d8d8d8"/>
+    <rect x="27" y="39" width="96" height="32" rx="12" fill="#ffffff" stroke="#d8d8d8"/>
+    <rect x="15" y="60" width="120" height="255" rx="34" fill="#fff" stroke="#dedede" stroke-width="3"/>
+    <rect x="27" y="112" width="96" height="138" rx="10" fill="#fffaf5" stroke="#ead8d2"/>
+    <text x="75" y="145" text-anchor="middle" font-family="Georgia,serif" font-size="22" fill="#5b1731" font-weight="700">OSRAH</text>
+    <text x="75" y="168" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#ad5674">COSMÉTIQUES</text>
+    <text x="75" y="200" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#49323a" font-weight="700">ÉCRAN SOLAIRE</text>
+    <text x="75" y="220" text-anchor="middle" font-family="Arial,sans-serif" font-size="12" fill="#49323a">TEINTÉ</text>
+    <circle cx="75" cy="268" r="29" fill="#ee8c23"/>
+    <text x="75" y="262" text-anchor="middle" font-family="Arial,sans-serif" font-size="10" fill="#fff" font-weight="700">SPF</text>
+    <text x="75" y="282" text-anchor="middle" font-family="Arial,sans-serif" font-size="22" fill="#fff" font-weight="700">50+</text>
+  </g>
+</svg>
