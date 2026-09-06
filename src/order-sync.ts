@@ -22,7 +22,7 @@ async function saveOrder(){
  const items=payItems();
  const fallback=readMirrorCart();
  const finalItems=items.length?items:fallback.map((p:any)=>({name:p.name,price:Number(p.price||0),qty:Number(p.qty||1),image:p.image||'',category:p.category||''}));
- if(!finalItems.length)return false;
+ if(!finalItems.length){console.error('OSRAH: panier introuvable au moment de la commande');return false}
  const active=document.querySelector('.x-pay aside>button.active')?.textContent?.trim()||'Carte bancaire';
  const rows=Array.from(document.querySelectorAll('.x-pay aside p'));
  const subtotal=num(rows.find(x=>x.textContent?.includes('Sous-total'))?.textContent||'');
@@ -33,17 +33,20 @@ async function saveOrder(){
  saving=true;
  try{
   const r=await fetch(ORDERS_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-  if(!r.ok)throw new Error('order save failed');
+  if(!r.ok)throw new Error(`order save failed ${r.status}`);
   sessionStorage.removeItem(CART_KEY);
   sessionStorage.setItem('osrah_last_order_saved','1');
+  console.log('OSRAH: commande enregistrée');
   return true;
  }catch(err){
   console.error('Erreur enregistrement commande:',err);
-  alert('La commande n’a pas pu être enregistrée. Vérifiez que le backend est lancé.');
+  alert('La commande n’a pas pu être enregistrée. Vérifiez que le backend est lancé sur le port 5000.');
   return false;
  }finally{saving=false}
 }
 
+// Capture phase is required: React changes the page during its click handler,
+// so we must read the checkout DOM before React removes it.
 document.addEventListener('click',e=>{
  const t=e.target as HTMLElement|null;
  const confirm=t?.closest('.x-pay .confirm') as HTMLButtonElement|null;
@@ -51,6 +54,5 @@ document.addEventListener('click',e=>{
  const box=document.querySelector('.pay-extra-fields');
  const missing=box?Array.from(box.querySelectorAll('input')).some(i=>!(i as HTMLInputElement).value.trim()):false;
  if(missing)return;
- // Save while the payment DOM and cart are still available; React can then switch to confirmation.
  void saveOrder();
-},false);
+},true);
