@@ -7,7 +7,8 @@ const PACKS = {
     images: [
       'https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946',
       'https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946'
+      'https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946',
+      'https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946'
     ],
     benefits: ['Nettoie en douceur', 'Hydrate et nourrit', 'Révèle l’éclat naturel']
   },
@@ -19,6 +20,7 @@ const PACKS = {
     images: [
       'https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946',
       'https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946',
+      'https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946',
       'https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a4e-ef19a78db909.webp?v=1769275507&width=1946'
     ],
     benefits: ['Cheveux plus forts et brillants', 'Une peau douce et nourrie', 'Des soins naturels et authentiques']
