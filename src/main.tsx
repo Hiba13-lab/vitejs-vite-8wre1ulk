@@ -10,6 +10,7 @@ import './site-fixes.ts'
 import './men-page.ts'
 import './favorites.ts'
 import './perfume-page.ts'
+import './payment-extra.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
