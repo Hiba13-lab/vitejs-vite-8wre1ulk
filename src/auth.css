@@ -1,0 +1,170 @@
+/* Login pages */
+
+.admin-login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 40px 20px;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(255,255,255,.9), transparent 30%),
+    linear-gradient(135deg, #fbe8ef 0%, #f7d7e3 48%, #f3c9d8 100%);
+}
+
+.admin-login-card {
+  width: min(520px, 94vw);
+  background: rgba(255,255,255,.96);
+  border: 1px solid rgba(255,255,255,.75);
+  border-radius: 28px;
+  padding: 46px 48px;
+  box-shadow: 0 28px 80px rgba(70, 25, 45, .16);
+}
+
+.admin-login-brand,
+.client-login-card .login-logo {
+  text-align: center;
+}
+
+.admin-login-brand strong {
+  display: block;
+  font-size: 48px;
+  line-height: 1;
+  letter-spacing: -1px;
+  color: #3a1728;
+}
+
+.admin-login-brand span {
+  display: block;
+  margin-top: 5px;
+  font: italic 25px Georgia, serif;
+  color: #c83d70;
+}
+
+.admin-login-kicker {
+  margin: 34px 0 8px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 2.4px;
+  font-weight: 800;
+  color: #c63d6e;
+}
+
+.admin-login-card h1 {
+  margin: 0;
+  text-align: center;
+  font: 500 48px/1.05 Georgia, serif;
+  color: #2d1721;
+}
+
+.admin-login-subtitle {
+  max-width: 390px;
+  margin: 12px auto 30px;
+  text-align: center;
+  color: #76666d;
+  line-height: 1.6;
+}
+
+.admin-login-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-login-card label {
+  margin-top: 8px;
+  font-weight: 700;
+  color: #2d2428;
+}
+
+.admin-login-card input {
+  height: 56px;
+  border: 1px solid #e3d8dc;
+  border-radius: 14px;
+  padding: 0 17px;
+  outline: none;
+  font-size: 15px;
+  background: white;
+}
+
+.admin-login-card input:focus { border-color: #c63d6e; }
+
+.admin-login-submit {
+  margin-top: 14px;
+  height: 56px;
+  border: 0;
+  border-radius: 14px;
+  background: #c90d4e;
+  color: white;
+  font-weight: 800;
+  letter-spacing: .4px;
+  cursor: pointer;
+}
+
+.admin-login-error {
+  margin: 4px 0 0;
+  color: #b4003d;
+  font-size: 13px;
+}
+
+.go-client-login {
+  width: 100%;
+  margin-top: 18px;
+  border: 0;
+  background: transparent;
+  color: #3a1728;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.demo-admin-hint {
+  display: block;
+  margin-top: 16px;
+  text-align: center;
+  color: #99868e;
+}
+
+/* Fix overlapping client-login title from the old styles */
+.client-login-card {
+  width: min(520px, 94vw) !important;
+  padding: 42px 46px !important;
+}
+
+.client-login-card h1 {
+  margin: 28px 0 10px !important;
+  font-size: 44px !important;
+  line-height: 1.06 !important;
+  letter-spacing: -1px !important;
+  white-space: normal !important;
+}
+
+.client-login-card .login-subtitle {
+  margin: 0 0 28px !important;
+  line-height: 1.5 !important;
+}
+
+.client-login-card .login-logo strong {
+  font-size: 44px !important;
+  line-height: 1 !important;
+}
+
+.client-login-card .login-logo span {
+  display: block;
+  margin-top: 4px;
+  line-height: 1.1;
+}
+
+.admin-logout-btn {
+  margin-bottom: 10px;
+  border-color: rgba(255,255,255,.35) !important;
+  color: #ffdbe8 !important;
+}
+
+@media (max-width: 600px) {
+  .admin-login-card,
+  .client-login-card {
+    padding: 34px 24px !important;
+  }
+  .admin-login-card h1,
+  .client-login-card h1 {
+    font-size: 38px !important;
+  }
+}
