@@ -4,13 +4,8 @@ const PACKS = {
     title: 'Une peau éclatante au quotidien',
     description: 'Le rituel idéal pour une peau nette, hydratée et lumineuse.',
     badge: '-20%',
-    heroImage: '',
-    images: [
-      'https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946'
-    ],
+    heroImage: 'https://osrahcosmetics.ma/cdn/shop/files/WhatsAppImage2026-01-27at12.32.09.jpg?v=1769610198&width=1248',
+    products: ['Brume parfumée','Gel douche Fleur d\'Oranger','Gommage corps sucre rose','Écran solaire SPF 50+'],
     benefits: ['Nettoie en douceur', 'Hydrate et nourrit', 'Révèle l’éclat naturel']
   },
   wellness: {
@@ -19,7 +14,7 @@ const PACKS = {
     description: 'Un rituel complet pour prendre soin de la peau, des cheveux et du bien-être au quotidien.',
     badge: '-25%',
     heroImage: 'https://osrahcosmetics.ma/cdn/shop/files/4309dcea-8f26-4092-b7fd-a4af762f640e.png?v=1778452571&width=1122',
-    images: [],
+    products: ['Huile de bronzage','Shampooing Blond Lumière','Gommage corps sucre rose','Savon noir Eucalyptus'],
     benefits: ['Cheveux plus forts et brillants', 'Une peau douce et nourrie', 'Des soins naturels et authentiques']
   }
 } as const;
@@ -31,6 +26,28 @@ function closePackDetail() {
   document.querySelector('.x-promos')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
+function addPackToCart(key: PackKey) {
+  const pack = PACKS[key];
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.x-grid article'));
+  let added = 0;
+
+  pack.products.forEach(name => {
+    const wanted = name.toLocaleLowerCase('fr');
+    const card = cards.find(item => (item.querySelector('h3')?.textContent || '').trim().toLocaleLowerCase('fr') === wanted);
+    const button = card?.querySelector<HTMLButtonElement>('.info > button');
+    if (button) {
+      button.click();
+      added += 1;
+    }
+  });
+
+  const cta = document.querySelector<HTMLButtonElement>('.pack-add-cart');
+  if (cta) {
+    cta.textContent = added ? `✓ Pack ajouté au panier (${added} produits)` : 'Ajouter le pack au panier';
+    cta.classList.toggle('added', added > 0);
+  }
+}
+
 function openPackDetail(key: PackKey) {
   const pack = PACKS[key];
   document.querySelector('.pack-detail-page')?.remove();
@@ -40,16 +57,12 @@ function openPackDetail(key: PackKey) {
 
   const page = document.createElement('section');
   page.className = 'pack-detail-page';
-  const visual = pack.heroImage
-    ? `<img class="pack-lifestyle-image" src="${pack.heroImage}" alt="${pack.eyebrow}"/>`
-    : `<div class="pack-products-collage">${pack.images.map((src, i) => `<img src="${src}" alt="Produit du pack" class="p${i + 1}"/>`).join('')}</div>`;
-
   page.innerHTML = `
     <button class="pack-detail-close" type="button">✕</button>
     <div class="pack-detail-main">
       <section class="pack-detail-visual">
         <div class="pack-discount">${pack.badge}</div>
-        ${visual}
+        <img class="pack-lifestyle-image" src="${pack.heroImage}" alt="${pack.eyebrow}" />
       </section>
       <section class="pack-detail-copy">
         <span class="pack-detail-eyebrow">${pack.eyebrow}</span>
@@ -59,7 +72,10 @@ function openPackDetail(key: PackKey) {
           ${pack.benefits.map(item => `<div>✓ <span>${item}</span></div>`).join('')}
         </div>
         <div class="pack-detail-note">Une sélection OSRAH pensée comme une routine complète.</div>
-        <button class="pack-return-cta" type="button">Continuer mes achats →</button>
+        <div class="pack-detail-actions">
+          <button class="pack-add-cart" type="button">Ajouter le pack au panier</button>
+          <button class="pack-return-cta" type="button">Continuer mes achats →</button>
+        </div>
       </section>
     </div>
   `;
@@ -67,6 +83,7 @@ function openPackDetail(key: PackKey) {
   promos.insertAdjacentElement('afterend', page);
   page.querySelector('.pack-detail-close')?.addEventListener('click', closePackDetail);
   page.querySelector('.pack-return-cta')?.addEventListener('click', closePackDetail);
+  page.querySelector('.pack-add-cart')?.addEventListener('click', () => addPackToCart(key));
   window.setTimeout(() => page.scrollIntoView({ behavior: 'smooth', block: 'start' }), 20);
 }
 
