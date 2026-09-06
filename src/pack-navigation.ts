@@ -4,6 +4,7 @@ const PACKS = {
     title: 'Une peau éclatante au quotidien',
     description: 'Le rituel idéal pour une peau nette, hydratée et lumineuse.',
     badge: '-20%',
+    heroImage: '',
     images: [
       'https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946',
       'https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946',
@@ -17,12 +18,8 @@ const PACKS = {
     title: 'Prenez soin de vous',
     description: 'Un rituel complet pour prendre soin de la peau, des cheveux et du bien-être au quotidien.',
     badge: '-25%',
-    images: [
-      'https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946',
-      'https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a4e-ef19a78db909.webp?v=1769275507&width=1946'
-    ],
+    heroImage: 'https://osrahcosmetics.ma/cdn/shop/files/4309dcea-8f26-4092-b7fd-a4af762f640e.png?v=1778452571&width=1122',
+    images: [],
     benefits: ['Cheveux plus forts et brillants', 'Une peau douce et nourrie', 'Des soins naturels et authentiques']
   }
 } as const;
@@ -43,14 +40,16 @@ function openPackDetail(key: PackKey) {
 
   const page = document.createElement('section');
   page.className = 'pack-detail-page';
+  const visual = pack.heroImage
+    ? `<img class="pack-lifestyle-image" src="${pack.heroImage}" alt="${pack.eyebrow}"/>`
+    : `<div class="pack-products-collage">${pack.images.map((src, i) => `<img src="${src}" alt="Produit du pack" class="p${i + 1}"/>`).join('')}</div>`;
+
   page.innerHTML = `
     <button class="pack-detail-close" type="button">✕</button>
     <div class="pack-detail-main">
       <section class="pack-detail-visual">
         <div class="pack-discount">${pack.badge}</div>
-        <div class="pack-products-collage">
-          ${pack.images.map((src, i) => `<img src="${src}" alt="Produit du pack" class="p${i + 1}"/>`).join('')}
-        </div>
+        ${visual}
       </section>
       <section class="pack-detail-copy">
         <span class="pack-detail-eyebrow">${pack.eyebrow}</span>
