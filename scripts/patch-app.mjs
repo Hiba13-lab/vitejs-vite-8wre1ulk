@@ -11,6 +11,10 @@ code = code.replace(
   'import React, { useEffect, useState } from "react";'
 );
 
+if (!code.includes('import "./premium.css";')) {
+  code = code.replace('import "./App.css";', 'import "./App.css";\nimport "./premium.css";');
+}
+
 const productsStart = code.indexOf(
   '  const [products, setProducts] = useState<Product[]>(['
 );
@@ -55,5 +59,16 @@ if (imageStart2 !== -1 && orderStart !== -1) {
   code = code.slice(0, imageStart2) + replacement + code.slice(orderStart);
 }
 
+const heroStartMarker = "        {/* HERO */}";
+const servicesMarker = "        {/* SERVICES */}";
+const heroStart = code.indexOf(heroStartMarker);
+const servicesStart = code.indexOf(servicesMarker);
+
+if (heroStart !== -1 && servicesStart !== -1 && !code.includes('className="luxury-hero"')) {
+  const premiumShowcase = `        {/* HERO */}\n\n        <section className="luxury-hero">\n          <div className="luxury-hero-overlay" />\n          <div className="luxury-hero-content">\n            <span className="luxury-kicker">NOUVELLE COLLECTION · 2026</span>\n            <h1>La beauté qui vous ressemble.</h1>\n            <p>Des soins iconiques, des nouveautés et des offres exclusives sélectionnées par Osrah Cosmétiques.</p>\n            <div className="luxury-hero-actions">\n              <button onClick={() => document.getElementById("products-section")?.scrollIntoView({ behavior: "smooth" })}>DÉCOUVRIR LA COLLECTION</button>\n              <button className="ghost" onClick={() => document.getElementById("sale-section")?.scrollIntoView({ behavior: "smooth" })}>VOIR LES SOLDES</button>\n            </div>\n          </div>\n          <div className="luxury-hero-badge"><strong>-30%</strong><span>sur une sélection</span></div>\n        </section>\n\n        <section className="campaign-grid">\n          <article className="campaign-card campaign-arrivals">\n            <div><span>NOUVEL ARRIVAGE</span><h3>Glow Season</h3><p>Les essentiels qui viennent d'arriver.</p><button onClick={() => document.getElementById("new-arrivals")?.scrollIntoView({ behavior: "smooth" })}>Découvrir →</button></div>\n          </article>\n          <article className="campaign-card campaign-hair">\n            <div><span>ROUTINE CHEVEUX</span><h3>Repair & Shine</h3><p>Une routine complète pour des cheveux sublimés.</p><button onClick={() => document.getElementById("products-section")?.scrollIntoView({ behavior: "smooth" })}>Voir la sélection →</button></div>\n          </article>\n          <article className="campaign-card campaign-sale">\n            <div><span>OFFRE LIMITÉE</span><h3>Beauty Sale</h3><p>Jusqu'à -30% sur nos favoris.</p><button onClick={() => document.getElementById("sale-section")?.scrollIntoView({ behavior: "smooth" })}>Profiter de l'offre →</button></div>\n          </article>\n        </section>\n\n        <section className="new-arrivals-section" id="new-arrivals">\n          <div className="premium-section-title">\n            <div><span>NOUVEAUTÉS</span><h2>Les derniers arrivages</h2><p>Les produits qui viennent de rejoindre la sélection Osrah.</p></div>\n            <button onClick={() => document.getElementById("products-section")?.scrollIntoView({ behavior: "smooth" })}>TOUT VOIR</button>\n          </div>\n          <div className="arrival-grid">\n            {products.slice(0, 4).map((product, index) => (\n              <article className="arrival-card" key={product.id}>\n                <div className="arrival-image-wrap">\n                  <img src={product.image} alt={product.name} />\n                  <span className="arrival-badge">{index === 0 ? "NEW" : index === 1 ? "BEST" : "NOUVEAU"}</span>\n                </div>\n                <div className="arrival-info">\n                  <small>{product.category}</small>\n                  <h3>{product.name}</h3>\n                  <div><strong>{product.price.toFixed(2)} DH</strong><button onClick={() => addToCart(product)}>＋</button></div>\n                </div>\n              </article>\n            ))}\n          </div>\n        </section>\n\n        <section className="sale-showcase" id="sale-section">\n          <div className="sale-copy">\n            <span>BEAUTY DAYS</span>\n            <h2>Les soldes sont arrivées.</h2>\n            <p>Profitez de prix doux sur une sélection de soins visage, cheveux et coffrets beauté.</p>\n            <div className="sale-codes"><strong>JUSQU'À -30%</strong><small>Offre dans la limite des stocks disponibles</small></div>\n            <button onClick={() => document.getElementById("products-section")?.scrollIntoView({ behavior: "smooth" })}>SHOPPER LES OFFRES</button>\n          </div>\n          <div className="sale-visual"><span>OSRAH</span><strong>SALE</strong><em>-30%</em></div>\n        </section>\n\n`;
+
+  code = code.slice(0, heroStart) + premiumShowcase + code.slice(servicesStart);
+}
+
 fs.writeFileSync(appPath, code, "utf8");
-console.log("Frontend products connected to http://localhost:5000/api/products");
+console.log("Frontend connected + premium storefront applied");
