@@ -26,7 +26,7 @@ function menPage(){
    const badge=document.querySelector('.x-icons .bag b'); if(badge) badge.textContent=String(Number(badge.textContent||0)+1);
  }));
 }
-function homePage(){document.querySelector('.tidy-men-page')?.remove();document.querySelectorAll('.men-hidden').forEach(el=>el.classList.remove('men-hidden'));window.scrollTo({top:0,behavior:'smooth'});}
+function homePage(){document.querySelector('.tidy-men-page')?.remove();document.querySelectorAll('.men-hidden').forEach(el=>el.classList.remove('men-hidden'));}
 
 function install(){
  const nav=document.querySelector('.x-nav'); if(!nav||nav.querySelector('[data-homme]'))return;
@@ -35,4 +35,8 @@ function install(){
  nav.insertBefore(b,promo||null);
  nav.addEventListener('click',e=>{const t=e.target as HTMLElement;if(t.closest('button')&&!t.closest('[data-homme]'))homePage()});
 }
-new MutationObserver(install).observe(document.body,{childList:true,subtree:true}); install();
+
+window.addEventListener('load',()=>setTimeout(install,50));
+document.addEventListener('click',()=>setTimeout(install,0),true);
+setTimeout(install,400);
+setTimeout(install,1200);
