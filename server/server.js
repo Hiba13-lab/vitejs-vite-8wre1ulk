@@ -11,6 +11,7 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const productsPath = path.join(__dirname, "products.json");
+const extraProductsPath = path.join(__dirname, "extra-products.json");
 const ordersPath = path.join(__dirname, "orders.json");
 
 function readJson(filePath) {
@@ -31,6 +32,25 @@ const writeProducts = (data) => writeJson(productsPath, data);
 const readOrders = () => readJson(ordersPath);
 const writeOrders = (data) => writeJson(ordersPath, data);
 
+function seedExtraProducts() {
+  const products = readProducts();
+  const extras = readJson(extraProductsPath);
+  let changed = false;
+  for (const extra of extras) {
+    const exists = products.some((p) => String(p.name).toLowerCase() === String(extra.name).toLowerCase());
+    if (!exists) {
+      products.push({
+        ...extra,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+      changed = true;
+    }
+  }
+  if (changed) writeProducts(products);
+}
+
+seedExtraProducts();
 console.log(`Base locale produits prête: ${productsPath}`);
 console.log(`Base locale commandes prête: ${ordersPath}`);
 
