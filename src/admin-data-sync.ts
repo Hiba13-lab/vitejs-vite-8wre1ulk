@@ -1,7 +1,8 @@
 type AdminProduct={id:number;name:string;description?:string;price:number;stock:number;category:string;image_url?:string;source?:'client'|'api'};
-type Order={id:number;reference:string;customer:any;items:any[];payment_method:string;subtotal:number;shipping:number;total:number;status:string;created_at:string};
+type Order={id:number;reference:string;client_key?:string;customer:any;items:any[];payment_method:string;subtotal:number;shipping:number;total:number;status:string;created_at:string;local_only?:boolean};
 const PRODUCT_API='http://localhost:5000/api/products';
 const ORDER_API='http://localhost:5000/api/orders';
+const LOCAL_ORDERS_KEY='osrah_client_orders';
 const IMG={
  brume:'https://osrahcosmetics.ma/cdn/shop/files/1-20_e3d23aa1-331c-4276-953b-556d8f34d7a7.webp?v=1769432013&width=1946',
  gel:'https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000ml.webp?v=1769518316&width=1946',
@@ -37,23 +38,28 @@ const clientProducts:AdminProduct[]=[
 const esc=(s:any)=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]||m));
 const money=(n:number)=>`${Number(n||0).toFixed(0)} DH`;
 let signature='';
+function readLocalOrders():Order[]{try{return JSON.parse(localStorage.getItem(LOCAL_ORDERS_KEY)||'[]')}catch{return[]}}
+function writeLocalOrders(orders:Order[]){localStorage.setItem(LOCAL_ORDERS_KEY,JSON.stringify(orders))}
 
 async function getData(){
  const [pr,or]=await Promise.allSettled([fetch(PRODUCT_API).then(r=>r.ok?r.json():[]),fetch(ORDER_API).then(r=>r.ok?r.json():[])]);
  const apiProducts:AdminProduct[]=pr.status==='fulfilled'?pr.value:[];
- const orders:Order[]=or.status==='fulfilled'?or.value:[];
+ const apiOrders:Order[]=or.status==='fulfilled'?or.value:[];
+ const localOrders=readLocalOrders();
+ const orders=[...localOrders,...apiOrders.filter(a=>!localOrders.some(l=>(l.client_key&&l.client_key===a.client_key)||(!l.local_only&&Number(l.id)===Number(a.id))))]
+  .sort((a,b)=>new Date(b.created_at).getTime()-new Date(a.created_at).getTime());
  const merged=[...clientProducts,...apiProducts.filter(p=>!clientProducts.some(c=>c.name.toLowerCase()===String(p.name).toLowerCase())).map(p=>({...p,source:'api' as const}))];
  return {products:merged,orders};
 }
 function productRows(products:AdminProduct[]){return products.map(p=>`<tr><td><div class="admin-prod"><img src="${esc(p.image_url||'')}" onerror="this.style.display='none'"><div><b>${esc(p.name)}</b><small>${esc((p.description||'').slice(0,58))}</small></div></div></td><td>${esc(p.category)}</td><td>${money(p.price)}</td><td><span class="admin-stock ${p.stock<=5?'admin-low':''}">${p.stock}</span></td><td>${p.source==='api'?`<button class="admin-edit" data-admin-edit="${p.id}">Modifier</button><button class="admin-delete" data-admin-delete="${p.id}">Supprimer</button>`:'<span class="admin-badge">Catalogue client</span>'}</td></tr>`).join('')}
 function orderRows(orders:Order[]){
  if(!orders.length)return '<div class="admin-empty">Aucune commande client pour le moment.</div>';
- return `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Commande</th><th>Client</th><th>Produits</th><th>Total</th><th>Paiement</th><th>Statut</th></tr></thead><tbody>${orders.map(o=>`<tr><td><b>#${esc(o.reference||`OSR-${o.id}`)}</b><small>${new Date(o.created_at).toLocaleString('fr-FR')}</small></td><td><b>${esc(o.customer?.name||'Client OSRAH')}</b><small>${esc(o.customer?.city||'')} · ${esc(o.customer?.phone||'')}</small></td><td>${o.items.map(i=>`<small>${Number(i.qty||1)}× ${esc(i.name)}</small>`).join('')}</td><td><b>${money(o.total)}</b></td><td>${esc(o.payment_method||'')}</td><td><select class="admin-order-status" data-order-status="${o.id}">${['Nouvelle','En préparation','Expédiée','Livrée','Annulée'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`;
+ return `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Commande</th><th>Client</th><th>Produits</th><th>Total</th><th>Paiement</th><th>Statut</th></tr></thead><tbody>${orders.map(o=>`<tr><td><b>#${esc(o.reference||`OSR-${o.id}`)}</b><small>${new Date(o.created_at).toLocaleString('fr-FR')}</small></td><td><b>${esc(o.customer?.name||'Client OSRAH')}</b><small>${esc(o.customer?.city||'')} · ${esc(o.customer?.phone||'')}</small></td><td>${o.items.map(i=>`<small>${Number(i.qty||1)}× ${esc(i.name)}</small>`).join('')}</td><td><b>${money(o.total)}</b></td><td>${esc(o.payment_method||'')}</td><td><select class="admin-order-status" data-order-status="${o.id}" data-client-key="${esc(o.client_key||'')}">${['Nouvelle','En préparation','Expédiée','Livrée','Annulée'].map(s=>`<option ${o.status===s?'selected':''}>${s}</option>`).join('')}</select></td></tr>`).join('')}</tbody></table></div>`;
 }
 async function sync(){
  const admin=document.querySelector('.x-admin'); if(!admin)return;
  const {products,orders}=await getData();
- const sig=JSON.stringify([products.map(p=>[p.id,p.name,p.price,p.stock]),orders.map(o=>[o.id,o.status,o.total])]);
+ const sig=JSON.stringify([products.map(p=>[p.id,p.name,p.price,p.stock]),orders.map(o=>[o.id,o.status,o.total,o.reference])]);
  if(sig===signature)return; signature=sig;
  const tbody=document.querySelector('[data-admin-section="products"] .admin-table tbody'); if(tbody)tbody.innerHTML=productRows(products);
  const orderCard=document.querySelector('[data-admin-section="orders"] .admin-card'); if(orderCard)orderCard.innerHTML=orderRows(orders);
@@ -61,6 +67,12 @@ async function sync(){
  if(kpis[0])kpis[0].textContent=String(products.length);
  if(kpis[1])kpis[1].textContent=String(orders.length);
  if(kpis[2])kpis[2].textContent=money(orders.reduce((s,o)=>s+Number(o.total||0),0));
- document.querySelectorAll<HTMLSelectElement>('[data-order-status]').forEach(sel=>sel.onchange=async()=>{await fetch(`${ORDER_API}/${sel.dataset.orderStatus}/status`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:sel.value})});signature='';sync()});
+ document.querySelectorAll<HTMLSelectElement>('[data-order-status]').forEach(sel=>sel.onchange=async()=>{
+  const locals=readLocalOrders();
+  const local=locals.find(o=>(sel.dataset.clientKey&&o.client_key===sel.dataset.clientKey)||Number(o.id)===Number(sel.dataset.orderStatus));
+  if(local){local.status=sel.value;writeLocalOrders(locals)}
+  if(local&&!local.local_only){fetch(`${ORDER_API}/${local.id}/status`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:sel.value})}).catch(()=>{})}
+  signature='';sync();
+ });
 }
-setInterval(sync,1800);window.addEventListener('load',sync);setTimeout(sync,500);
+setInterval(sync,1200);window.addEventListener('load',sync);setTimeout(sync,300);
