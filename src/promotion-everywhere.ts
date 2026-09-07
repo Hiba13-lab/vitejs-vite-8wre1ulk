@@ -33,4 +33,7 @@ let scheduled=false;function schedule(){if(scheduled)return;scheduled=true;reque
 new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});
 document.addEventListener('click',()=>setTimeout(applyPromoPrices,30));
 document.addEventListener('input',()=>setTimeout(applyPromoPrices,30));
-window.addEventListener('storage',applyPromoPrices);window.addEventListener('load',applyPromoPrices);setTimeout(applyPromoPrices,300);setTimeout(applyPromoPrices,900);
+window.addEventListener('storage',applyPromoPrices);
+window.addEventListener('osrah-promos-changed',applyPromoPrices);
+window.addEventListener('load',applyPromoPrices);
+setTimeout(applyPromoPrices,300);setTimeout(applyPromoPrices,900);
