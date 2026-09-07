@@ -12,7 +12,7 @@ const GEL="https://osrahcosmetics.ma/cdn/shop/files/GelDoucheFleurd_Oranger1000m
 const GOMMAGE="https://osrahcosmetics.ma/cdn/shop/files/1-05_f8e2a2a7-eb34-4404-b101-8d659973e4b0.webp?v=1769440772&width=1946";
 const SAVON="https://osrahcosmetics.ma/cdn/shop/files/1-20_03d27d7c-53c6-4fe8-8a4e-ef19a78db909.webp?v=1769275507&width=1946";
 const BRONZE="https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946";
-const SPF50="https://osrahcosmetics.ma/cdn/shop/files/ecran_solaire_teinte_spf50_osrah.png?v=1780759520&width=1946";
+const SPF50="/spf50.svg";
 const HAIR="https://osrahcosmetics.ma/cdn/shop/files/1-10_d0a1dd97-a339-415a-bf3f-1a555c52d7c1.webp?v=1769279715&width=1946";
 const BLOND_SHAMPOO="https://osrahcosmetics.ma/cdn/shop/files/1-15_b30a107d-5f7f-4d16-b4a9-9bffcaad8fdf.webp?v=1769269984&width=1946";
 const BLOND_MASK="https://osrahcosmetics.ma/cdn/shop/files/1-18.webp?v=1769267021&width=1946";
