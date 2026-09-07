@@ -7,76 +7,60 @@ function read():Record<string,Promo>{try{return JSON.parse(localStorage.getItem(
 function write(x:Record<string,Promo>){localStorage.setItem(KEY,JSON.stringify(x))}
 function num(s:string){return Number((s||'').replace(/[^0-9.,]/g,'').replace(',','.'))||0}
 
+function askPrice(title:string,value:string):Promise<string|null>{
+ return new Promise(resolve=>{
+  document.querySelector('.osrah-price-modal')?.remove();
+  const wrap=document.createElement('div');wrap.className='osrah-price-modal';
+  wrap.innerHTML=`<div class="osrah-price-box"><button type="button" class="osrah-price-x">×</button><h3>${title}</h3><input class="osrah-price-input" inputmode="decimal" value="${value}"><div class="osrah-price-actions"><button type="button" class="osrah-price-cancel">Annuler</button><button type="button" class="osrah-price-ok">OK</button></div></div>`;
+  document.body.appendChild(wrap);
+  const input=wrap.querySelector('.osrah-price-input') as HTMLInputElement;setTimeout(()=>{input.focus();input.select()},0);
+  const done=(v:string|null)=>{wrap.remove();resolve(v)};
+  wrap.querySelector('.osrah-price-ok')?.addEventListener('click',()=>done(input.value));
+  wrap.querySelector('.osrah-price-cancel')?.addEventListener('click',()=>done(null));
+  wrap.querySelector('.osrah-price-x')?.addEventListener('click',()=>done(null));
+  wrap.addEventListener('click',e=>{if(e.target===wrap)done(null)});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')done(input.value);if(e.key==='Escape')done(null)});
+ });
+}
+
 function enhanceAdmin(){
- const section=document.querySelector('[data-admin-section="products"]');
- if(!section)return;
+ const section=document.querySelector('[data-admin-section="products"]');if(!section)return;
  const promos=read();
  section.querySelectorAll<HTMLTableRowElement>('tbody tr').forEach(row=>{
-  const name=row.querySelector('.admin-prod b')?.textContent?.trim()||'';
-  if(!name)return;
-  const priceCell=row.children[2] as HTMLElement|undefined;
-  const actions=row.children[4] as HTMLElement|undefined;
-  if(!priceCell||!actions)return;
+  const name=row.querySelector('.admin-prod b')?.textContent?.trim()||'';if(!name)return;
+  const priceCell=row.children[2] as HTMLElement|undefined;const actions=row.children[4] as HTMLElement|undefined;if(!priceCell||!actions)return;
   const active=promos[name];
-  if(active){
-   priceCell.innerHTML=`<b style="color:#c72f67">${active.price.toFixed(0)} DH</b><br><del style="color:#9b7b87">${active.old.toFixed(0)} DH</del>`;
-  }
+  if(active)priceCell.innerHTML=`<b style="color:#c72f67">${active.price.toFixed(0)} DH</b><br><del style="color:#9b7b87">${active.old.toFixed(0)} DH</del>`;
   if(actions.querySelector('[data-promo-name]'))return;
-  const btn=document.createElement('button');
-  btn.type='button';btn.className='admin-edit';btn.dataset.promoName=name;
-  btn.textContent=active?'Modifier promo':'Mettre en promo';
-  actions.appendChild(btn);
-  if(active){
-   const remove=document.createElement('button');remove.type='button';remove.className='admin-delete';remove.dataset.promoRemove=name;remove.textContent='Retirer promo';actions.appendChild(remove);
-  }
+  const btn=document.createElement('button');btn.type='button';btn.className='admin-edit';btn.dataset.promoName=name;btn.textContent=active?'Modifier promo':'Mettre en promo';actions.appendChild(btn);
+  if(active){const remove=document.createElement('button');remove.type='button';remove.className='admin-delete';remove.dataset.promoRemove=name;remove.textContent='Retirer promo';actions.appendChild(remove)}
  });
 }
 
 function applyClient(){
  const promos=read();
  document.querySelectorAll<HTMLElement>('.x-grid article').forEach(card=>{
-  const name=card.querySelector('h3')?.textContent?.trim()||'';
-  const promo=promos[name];
-  if(!promo)return;
-  let badge=card.querySelector('.promo-badge') as HTMLElement|null;
-  if(!badge){badge=document.createElement('span');badge.className='promo-badge';badge.textContent='PROMO';card.prepend(badge)}
-  const info=card.querySelector('.info');if(!info)return;
-  let block=info.querySelector('.promo-price') as HTMLElement|null;
-  if(!block){
-   const regular=Array.from(info.children).find(el=>el.tagName==='B');
-   block=document.createElement('div');block.className='promo-price';
-   if(regular)regular.replaceWith(block);else info.querySelector('button')?.before(block);
-  }
+  const name=card.querySelector('h3')?.textContent?.trim()||'';const promo=promos[name];if(!promo)return;
+  let badge=card.querySelector('.promo-badge') as HTMLElement|null;if(!badge){badge=document.createElement('span');badge.className='promo-badge';badge.textContent='PROMO';card.prepend(badge)}
+  const info=card.querySelector('.info');if(!info)return;let block=info.querySelector('.promo-price') as HTMLElement|null;
+  if(!block){const regular=Array.from(info.children).find(el=>el.tagName==='B');block=document.createElement('div');block.className='promo-price';if(regular)regular.replaceWith(block);else info.querySelector('button')?.before(block)}
   block.innerHTML=`<span>${promo.price.toFixed(0)} DH</span><del>${promo.old.toFixed(0)} DH</del>`;
  });
- const detail=document.querySelector('.x-detail main');
- if(detail){
-  const name=detail.querySelector('h1')?.textContent?.trim()||'';const promo=promos[name];
-  if(promo){const h2=detail.querySelector('h2');if(h2)h2.textContent=`${promo.price.toFixed(2)} DH`;let old=detail.querySelector('.detail-old-price') as HTMLElement|null;if(!old){old=document.createElement('div');old.className='detail-old-price';h2?.after(old)}old.textContent=`${promo.old.toFixed(0)} DH`;}
- }
+ const detail=document.querySelector('.x-detail main');if(detail){const name=detail.querySelector('h1')?.textContent?.trim()||'';const promo=promos[name];if(promo){const h2=detail.querySelector('h2');if(h2)h2.textContent=`${promo.price.toFixed(2)} DH`;let old=detail.querySelector('.detail-old-price') as HTMLElement|null;if(!old){old=document.createElement('div');old.className='detail-old-price';h2?.after(old)}old.textContent=`${promo.old.toFixed(0)} DH`;}}
 }
-
 function refresh(){enhanceAdmin();applyClient()}
 
-document.addEventListener('click',e=>{
+document.addEventListener('click',async e=>{
  const t=e.target as HTMLElement|null;if(!t)return;
  const promoBtn=t.closest('[data-promo-name]') as HTMLElement|null;
- if(promoBtn){
-  e.preventDefault();e.stopPropagation();
-  const name=promoBtn.dataset.promoName||'';const promos=read();
-  const row=promoBtn.closest('tr');const current=promos[name];
-  const base=current?.old||num((row?.children[2] as HTMLElement|null)?.textContent||'');
-  const oldRaw=prompt(`Prix normal de ${name} (DH)`,String(base));if(oldRaw===null)return;
-  const old=Number(oldRaw.replace(',','.'));if(!old||old<=0)return alert('Prix normal invalide.');
-  const promoRaw=prompt(`Prix promo de ${name} (DH)`,String(current?.price||Math.max(1,Math.round(old*.8))));if(promoRaw===null)return;
-  const price=Number(promoRaw.replace(',','.'));if(!price||price<=0||price>=old)return alert('Le prix promo doit être inférieur au prix normal.');
+ if(promoBtn){e.preventDefault();e.stopPropagation();const name=promoBtn.dataset.promoName||'';const promos=read();const row=promoBtn.closest('tr');const current=promos[name];const base=current?.old||num((row?.children[2] as HTMLElement|null)?.textContent||'');
+  const oldRaw=await askPrice(`Prix normal de ${name} (DH)`,String(base));if(oldRaw===null)return;const old=Number(oldRaw.replace(',','.'));if(!old||old<=0)return alert('Prix normal invalide.');
+  const promoRaw=await askPrice(`Prix promo de ${name} (DH)`,String(current?.price||Math.max(1,Math.round(old*.8))));if(promoRaw===null)return;const price=Number(promoRaw.replace(',','.'));if(!price||price<=0||price>=old)return alert('Le prix promo doit être inférieur au prix normal.');
   promos[name]={price,old};write(promos);refresh();return;
  }
- const remove=t.closest('[data-promo-remove]') as HTMLElement|null;
- if(remove){e.preventDefault();e.stopPropagation();const promos=read();delete promos[remove.dataset.promoRemove||''];write(promos);const row=remove.closest('tr');if(row){const name=row.querySelector('.admin-prod b')?.textContent?.trim()||'';const p=promos[name];if(!p)location.reload()}return;}
+ const remove=t.closest('[data-promo-remove]') as HTMLElement|null;if(remove){e.preventDefault();e.stopPropagation();const promos=read();delete promos[remove.dataset.promoRemove||''];write(promos);location.reload();return}
  setTimeout(refresh,60);
 },true);
+window.addEventListener('load',refresh);setTimeout(refresh,250);setTimeout(refresh,900);
 
-window.addEventListener('load',refresh);
-setTimeout(refresh,250);
-setTimeout(refresh,900);
+const style=document.createElement('style');style.textContent=`.osrah-price-modal{position:fixed;inset:0;background:rgba(42,12,25,.38);display:grid;place-items:center;z-index:99999;padding:20px}.osrah-price-box{width:min(520px,92vw);background:#fff;border-radius:22px;padding:28px;box-shadow:0 24px 70px rgba(62,12,32,.22);position:relative}.osrah-price-box h3{margin:0 36px 18px 0;color:#55112c;font-size:20px}.osrah-price-input{width:100%;box-sizing:border-box;border:1px solid #e2ccd5;border-radius:12px;padding:14px 16px;font-size:18px;outline:none}.osrah-price-input:focus{border-color:#bd3568;box-shadow:0 0 0 3px rgba(189,53,104,.12)}.osrah-price-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.osrah-price-actions button,.osrah-price-x{border:0;border-radius:10px;padding:11px 20px;cursor:pointer;font-weight:700}.osrah-price-ok{background:#7b1438;color:#fff}.osrah-price-cancel{background:#f6eaf0;color:#6b2740}.osrah-price-x{position:absolute;right:16px;top:12px;background:transparent;color:#7b1438;font-size:24px;padding:4px 8px}`;document.head.appendChild(style);
