@@ -1,0 +1,56 @@
+[
+  {
+    "id": 23,
+    "name": "Huile de massage relaxante Terre d'Arômes",
+    "description": "Huile de massage relaxante Terre d'Arômes, idéale pour un moment de détente.",
+    "price": 69,
+    "stock": 20,
+    "category": "Corps",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/files/pomelli-image_22.jpg?v=1774288012&width=1024"
+  },
+  {
+    "id": 24,
+    "name": "Huile essentielle Gingembre Terre d'Arômes",
+    "description": "Huile essentielle de gingembre Terre d'Arômes 10 ml.",
+    "price": 49,
+    "stock": 18,
+    "category": "Corps",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/products/Designsanstitre-142.jpg?v=1768083698&width=1946"
+  },
+  {
+    "id": 25,
+    "name": "Huile essentielle de Thym Terre d'Arômes",
+    "description": "Huile essentielle de thym Terre d'Arômes 10 ml.",
+    "price": 49,
+    "stock": 18,
+    "category": "Corps",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/products/Designsanstitre-142.jpg?v=1768083698&width=1946"
+  },
+  {
+    "id": 26,
+    "name": "Huile essentielle Citron Terre d'Arômes",
+    "description": "Huile essentielle de citron Terre d'Arômes 10 ml.",
+    "price": 49,
+    "stock": 18,
+    "category": "Corps",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/products/Designsanstitre-142.jpg?v=1768083698&width=1946"
+  },
+  {
+    "id": 27,
+    "name": "Lait démaquillant Subliderm",
+    "description": "Lait démaquillant Subliderm pour tous types de peaux.",
+    "price": 49,
+    "stock": 22,
+    "category": "Visage",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/files/1-09_220c1547-762f-4587-807d-27152c74edba.webp?v=1769454500&width=1946"
+  },
+  {
+    "id": 28,
+    "name": "Shampooing Sans Sulfate OSRAH 400 ml",
+    "description": "Shampooing OSRAH sans sulfate, sans parabène et sans silicone, 400 ml.",
+    "price": 39,
+    "stock": 30,
+    "category": "Cheveux",
+    "image_url": "https://osrahcosmetics.ma/cdn/shop/files/1-13_69ba91f2-8616-4f8b-a764-664b7daf79cb.webp?v=1769266736&width=1946"
+  }
+]
