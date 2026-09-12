@@ -15,5 +15,7 @@
 .x-login-card form>button:hover{transform:translateY(-1px);box-shadow:0 16px 30px rgba(138,23,66,.24)!important}
 .x-login-card .x-error{margin-top:4px;padding:9px 12px;border-radius:9px;background:#fff0f3;color:#a41546;font-size:12px;text-align:center}
 .x-login-card>small{display:none!important}
-.x-cats button span{background:#f7e8eb!important}.x-cats button span img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}.x-cats button:nth-child(4) span img{object-fit:cover!important;background:#fff}.x-cats button:nth-child(7) span img,.x-cats button:nth-child(8) span img{object-fit:cover!important}
+.x-cats button span{background:#f7e8eb!important}.x-cats button span img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
+.x-cats button:nth-child(4) span{background:#fff url("https://osrahcosmetics.ma/cdn/shop/files/huile-bronzage-pailletee-osrah.png?v=1780759691&width=1946") center/contain no-repeat!important}.x-cats button:nth-child(4) span img{display:none!important}
+.x-cats button:nth-child(7) span img,.x-cats button:nth-child(8) span img{object-fit:cover!important}
 @media(max-width:700px){.x-login{padding:20px}.x-login-card{padding:32px 24px 28px!important;border-radius:22px!important}.x-login-card::before{left:24px;right:24px}.x-login-card h1{font-size:30px!important}}
