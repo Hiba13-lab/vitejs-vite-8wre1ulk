@@ -24,6 +24,7 @@ import './hero-safe.ts'
 import './client-logout.ts'
 import './presentation-visual-fixes.ts'
 import './promo-home.ts'
+import './pack-navigation.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
