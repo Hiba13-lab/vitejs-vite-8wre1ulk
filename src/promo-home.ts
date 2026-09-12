@@ -15,17 +15,20 @@ function markPromoCards() {
   document.querySelectorAll<HTMLElement>(".x-products .x-grid article").forEach((card) => {
     const info = card.querySelector<HTMLElement>(".info");
     const name = info?.querySelector<HTMLElement>("h3")?.textContent?.trim();
+    const price = info?.querySelector<HTMLElement>(":scope > b");
     if (!name || !info) return;
 
     const oldPrice = HOME_PROMOS[name];
     if (!oldPrice) {
       card.classList.remove("home-promo-card");
       info.removeAttribute("data-old-price");
+      price?.removeAttribute("data-old-price");
       return;
     }
 
     card.classList.add("home-promo-card");
     info.dataset.oldPrice = `${oldPrice} DH`;
+    if (price) price.dataset.oldPrice = `${oldPrice} DH`;
   });
 }
 
