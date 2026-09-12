@@ -13,18 +13,19 @@ const HOME_PROMOS: Record<string, number> = {
 
 function markPromoCards() {
   document.querySelectorAll<HTMLElement>(".x-products .x-grid article").forEach((card) => {
-    const name = card.querySelector<HTMLElement>(".info h3")?.textContent?.trim();
-    if (!name) return;
+    const info = card.querySelector<HTMLElement>(".info");
+    const name = info?.querySelector<HTMLElement>("h3")?.textContent?.trim();
+    if (!name || !info) return;
 
     const oldPrice = HOME_PROMOS[name];
     if (!oldPrice) {
       card.classList.remove("home-promo-card");
-      card.removeAttribute("data-old-price");
+      info.removeAttribute("data-old-price");
       return;
     }
 
     card.classList.add("home-promo-card");
-    card.dataset.oldPrice = `${oldPrice} DH`;
+    info.dataset.oldPrice = `${oldPrice} DH`;
   });
 }
 
