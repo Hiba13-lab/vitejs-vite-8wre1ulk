@@ -11,49 +11,33 @@ const HOME_PROMOS: Record<string, number> = {
   "Lotion micellaire": 72,
 };
 
-let applying = false;
-
-function applyHomePromos() {
-  if (applying) return;
-  const store = document.querySelector(".x-store");
-  if (!store) return;
-
-  applying = true;
+function markPromoCards() {
   document.querySelectorAll<HTMLElement>(".x-products .x-grid article").forEach((card) => {
     const name = card.querySelector<HTMLElement>(".info h3")?.textContent?.trim();
     if (!name) return;
+
     const oldPrice = HOME_PROMOS[name];
-    if (!oldPrice) return;
-
-    if (!card.querySelector(".promo-badge")) {
-      const badge = document.createElement("span");
-      badge.className = "promo-badge";
-      badge.textContent = "PROMO";
-      card.prepend(badge);
+    if (!oldPrice) {
+      card.classList.remove("home-promo-card");
+      card.removeAttribute("data-old-price");
+      return;
     }
 
-    const info = card.querySelector<HTMLElement>(".info");
-    if (!info || info.querySelector(".promo-price")) return;
-
-    const priceNode = Array.from(info.children).find(
-      (el) => el.tagName === "B" && /DH/.test(el.textContent || "")
-    ) as HTMLElement | undefined;
-
-    if (priceNode) {
-      const currentPrice = priceNode.textContent || "";
-      const promo = document.createElement("div");
-      promo.className = "promo-price";
-      promo.innerHTML = `<span>${currentPrice}</span><del>${oldPrice} DH</del>`;
-      priceNode.replaceWith(promo);
-    }
+    card.classList.add("home-promo-card");
+    card.dataset.oldPrice = `${oldPrice} DH`;
   });
-  applying = false;
 }
 
-applyHomePromos();
+markPromoCards();
 
+let scheduled = false;
 const promoObserver = new MutationObserver(() => {
-  window.requestAnimationFrame(applyHomePromos);
+  if (scheduled) return;
+  scheduled = true;
+  window.requestAnimationFrame(() => {
+    scheduled = false;
+    markPromoCards();
+  });
 });
 
 promoObserver.observe(document.body, { childList: true, subtree: true });
