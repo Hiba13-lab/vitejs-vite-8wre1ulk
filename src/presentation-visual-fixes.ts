@@ -7,45 +7,14 @@ function fixCategoryImages(){
     const label=button.querySelector("b")?.textContent?.trim();
     const img=button.querySelector<HTMLImageElement>("img");
     if(!img)return;
-    if(label==="Solaire") img.src=REAL_SOLAR;
-    if(label==="Nouveautés") img.src=REAL_NEW;
-    if(label==="Promotions") img.src=REAL_PROMO;
+    if(label==="Solaire" && img.src!==REAL_SOLAR) img.src=REAL_SOLAR;
+    if(label==="Nouveautés" && img.src!==REAL_NEW) img.src=REAL_NEW;
+    if(label==="Promotions" && img.src!==REAL_PROMO) img.src=REAL_PROMO;
   });
 }
 
-function polishLogin(){
-  const login=document.querySelector<HTMLElement>(".x-login");
-  if(!login)return;
-  const card=login.querySelector<HTMLElement>(".x-login-card");
-  if(!card)return;
-  const title=card.querySelector("h1");
-  if(title) title.textContent="Se connecter";
-  const subtitle=card.querySelector("p");
-  if(subtitle) subtitle.textContent="Accédez à votre espace OSRAH";
-  card.querySelectorAll("label").forEach((label)=>label.classList.add("login-field-label"));
-  const form=card.querySelector("form");
-  if(form && !form.querySelector(".login-extra")){
-    const extra=document.createElement("div");
-    extra.className="login-extra";
-    extra.innerHTML='<label class="remember"><input type="checkbox"/> <span>Se souvenir de moi</span></label><button type="button" class="forgot">Mot de passe oublié ?</button>';
-    const submit=form.querySelector("button[type=submit], button:not([type])");
-    if(submit) form.insertBefore(extra,submit);
-    const divider=document.createElement("div");
-    divider.className="login-divider";
-    divider.textContent="ou";
-    const create=document.createElement("button");
-    create.type="button";
-    create.className="create-account";
-    create.textContent="Créer un compte";
-    form.append(divider,create);
-  }
-}
-
-function applyFixes(){
+window.addEventListener("load",()=>{
   fixCategoryImages();
-  polishLogin();
-}
-
-applyFixes();
-const observer=new MutationObserver(applyFixes);
-observer.observe(document.body,{childList:true,subtree:true});
+  window.setTimeout(fixCategoryImages,300);
+  window.setTimeout(fixCategoryImages,900);
+});
