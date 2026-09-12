@@ -30,41 +30,31 @@ function closePackDetail() {
   document.body.classList.remove('pack-page-open');
 }
 
-function normalizeName(value: string) {
-  return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
-}
-
 function addPackToCart(key: PackKey) {
   const pack = PACKS[key];
-  const cards = Array.from(document.querySelectorAll<HTMLElement>('.x-grid article'));
-  let added = 0;
-
-  pack.products.forEach(name => {
-    const wanted = normalizeName(name);
-    const card = cards.find(item => normalizeName(item.querySelector('h3')?.textContent || '') === wanted);
-    const button = card?.querySelector<HTMLButtonElement>('.info button');
-    if (button) {
-      button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
-      added += 1;
+  window.dispatchEvent(new CustomEvent('osrah:add-pack', {
+    detail: {
+      key,
+      name: pack.eyebrow,
+      title: pack.title,
+      price: pack.price,
+      oldPrice: pack.oldPrice,
+      image: pack.heroImage,
+      products: [...pack.products]
     }
-  });
+  }));
 
   const cta = document.querySelector<HTMLButtonElement>('.pack-add-cart');
   if (cta) {
-    cta.textContent = added === pack.products.length
-      ? `✓ Pack ajouté au panier (${added} produits)`
-      : added > 0
-        ? `✓ ${added} produit(s) ajouté(s) au panier`
-        : 'Impossible d’ajouter le pack — réessayez';
-    cta.classList.toggle('added', added > 0);
+    cta.textContent = `✓ Pack ajouté au panier — ${pack.price} DH`;
+    cta.classList.add('added');
   }
 
-  if (added > 0) {
-    window.setTimeout(() => {
-      closePackDetail();
-      document.querySelector('.x-icons .bag')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 700);
-  }
+  window.setTimeout(() => {
+    closePackDetail();
+    const bag = document.querySelector<HTMLButtonElement>('.x-icons .bag');
+    bag?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 650);
 }
 
 function openPackDetail(key: PackKey) {
