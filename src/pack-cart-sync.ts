@@ -15,7 +15,8 @@ function syncCartBadge(){
   const badge=document.querySelector<HTMLElement>('.x-icons .bag b');
   if(!badge)return;
   const total=readCart().reduce((sum,item)=>sum+(Number(item.qty)||0),0);
-  badge.textContent=String(total);
+  const next=String(total);
+  if(badge.textContent!==next)badge.textContent=next;
 }
 
 window.addEventListener('osrah:add-pack',((event:Event)=>{
@@ -28,15 +29,12 @@ window.addEventListener('osrah:add-pack',((event:Event)=>{
   if(index>=0)items[index].qty+=1;
   else items.push({name,price:detail.price,image:detail.image,category:'Pack OSRAH',qty:1});
   writeCart(items);
-  syncCartBadge();
+  window.setTimeout(syncCartBadge,0);
 }) as EventListener);
 
-// Le panier premium utilise sessionStorage : on garde le badge de l'en-tête aligné
-// avec le nombre réel d'articles (produits + packs).
+// Synchronisation légère sans MutationObserver pour éviter une boucle DOM
+// qui pouvait figer la boutique juste après la connexion client.
 document.addEventListener('click',()=>window.setTimeout(syncCartBadge,0),true);
-const badgeObserver=new MutationObserver(()=>syncCartBadge());
-badgeObserver.observe(document.body,{childList:true,subtree:true});
-window.addEventListener('load',syncCartBadge);
-window.setTimeout(syncCartBadge,250);
+window.addEventListener('load',()=>window.setTimeout(syncCartBadge,100));
 
 export {};
