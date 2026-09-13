@@ -15,6 +15,7 @@ import './presentation-visual-fixes.ts'
 import './cart-premium.ts'
 import './pack-cart-sync.ts'
 import './pack-navigation.ts'
+import './hero-safe.ts'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
