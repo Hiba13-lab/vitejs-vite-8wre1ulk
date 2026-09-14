@@ -50,7 +50,7 @@ async function toggleAdminPromotion(button: HTMLElement) {
       const current = Number(promoNumber.textContent || '0');
       promoNumber.textContent = String(Math.max(0, current + (promotion ? 1 : -1)));
     }
-  } catch (error) {
+  } catch {
     button.classList.toggle('on', wasOn);
     alert('Impossible d’activer la promotion. Vérifiez que le backend est lancé avec: node server/server.js');
   } finally {
@@ -58,7 +58,9 @@ async function toggleAdminPromotion(button: HTMLElement) {
   }
 }
 
-document.addEventListener('pointerup', (event) => {
+// Loaded before admin-safe.ts. Capture the click first so the older admin handler
+// cannot toggle the same product a second time.
+document.addEventListener('click', (event) => {
   const target = event.target as HTMLElement | null;
   const button = target?.closest('[data-safe-promo]') as HTMLElement | null;
   if (!button || !button.closest('.x-admin')) return;
