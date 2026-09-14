@@ -1,4 +1,4 @@
-const HERO='https://osrahcosmetics.ma/cdn/shop/files/WhatsAppImage2026-01-27at12.32.09.jpg?v=1769610198&width=1600';
+const HERO='/osrah-hero.jpg';
 
 function applyHero(){
   const img=document.querySelector<HTMLImageElement>('.x-hero .visual img');
