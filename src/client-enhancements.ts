@@ -12,21 +12,30 @@ function parseCard(btn:HTMLElement):FavItem|null{
   return name&&image?{name,image,category,price}:null;
 }
 
+function getFavHeaderButton(){
+  return Array.from(document.querySelectorAll<HTMLButtonElement>('.x-icons>button')).find(b=>b.textContent?.includes('Favoris'))||null;
+}
+
 function refreshFavBadge(){
-  const fav=Array.from(document.querySelectorAll<HTMLButtonElement>('.x-icons>button')).find(b=>b.textContent?.includes('Favoris'));if(!fav)return;
-  let badge=fav.querySelector('.fav-count') as HTMLElement|null;const n=readFavs().length;
+  const fav=getFavHeaderButton();if(!fav)return;
+  fav.style.position='relative';
+  let badge=fav.querySelector('.fav-count') as HTMLElement|null;
+  const n=readFavs().length;
   if(!badge){badge=document.createElement('b');badge.className='fav-count';fav.appendChild(badge)}
-  badge.textContent=String(n);badge.style.display=n?'grid':'none';
+  badge.textContent=String(n);
+  badge.setAttribute('aria-label',`${n} produit${n>1?'s':''} favori${n>1?'s':''}`);
+  badge.style.display=n?'grid':'none';
 }
 
 function syncHearts(){
   const names=new Set(readFavs().map(x=>x.name));
-  document.querySelectorAll<HTMLElement>('.x-grid article').forEach(a=>{
-    const name=a.querySelector('h3')?.textContent?.trim()||'';
-    const heart=a.querySelector<HTMLElement>('.fav');if(!heart)return;
+  document.querySelectorAll<HTMLElement>('.x-grid article').forEach(article=>{
+    const name=article.querySelector('h3')?.textContent?.trim()||'';
+    const heart=article.querySelector<HTMLElement>('.fav');if(!heart)return;
     const selected=names.has(name);
     heart.classList.toggle('liked',selected);
     heart.setAttribute('aria-pressed',selected?'true':'false');
+    heart.setAttribute('title',selected?'Retirer des favoris':'Ajouter aux favoris');
     heart.textContent=selected?'♥':'♡';
     heart.style.cursor='pointer';
     heart.style.pointerEvents='auto';
@@ -40,7 +49,9 @@ function toggleFavorite(btn:HTMLElement){
   const item=parseCard(btn);if(!item)return;
   const items=readFavs();const i=items.findIndex(x=>x.name===item.name);
   if(i>=0)items.splice(i,1);else items.push(item);
-  writeFavs(items);syncHearts();refreshFavBadge();
+  writeFavs(items);
+  syncHearts();
+  refreshFavBadge();
 }
 
 function closeFavs(){document.querySelector('.favorites-panel-wrap')?.remove();document.body.classList.remove('favorites-open')}
@@ -66,6 +77,7 @@ document.addEventListener('click',e=>{
   if(topFav&&topFav.textContent?.includes('Favoris')){e.preventDefault();e.stopImmediatePropagation();renderFavs();return}
 },true);
 
-window.addEventListener('load',()=>setTimeout(enhance,150));
+window.addEventListener('load',()=>{setTimeout(enhance,100);setTimeout(enhance,500)});
 document.addEventListener('click',()=>setTimeout(enhance,80),false);
+window.addEventListener('storage',e=>{if(e.key===FAV_KEY)enhance()});
 export {};
