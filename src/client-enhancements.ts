@@ -1,4 +1,5 @@
 type FavItem={name:string;price:string;image:string;category:string};
+type PromoProduct={id:number;name:string;description?:string;price:number;stock:number;category:string;image_url?:string;promotion?:boolean;discount_percent?:number};
 const FAV_KEY='osrah_favorites_ui';
 const readFavs=():FavItem[]=>{try{return JSON.parse(localStorage.getItem(FAV_KEY)||'[]')}catch{return[]}};
 const writeFavs=(items:FavItem[])=>localStorage.setItem(FAV_KEY,JSON.stringify(items));
@@ -12,71 +13,19 @@ function parseCard(btn:HTMLElement):FavItem|null{
   return name&&image?{name,image,category,price}:null;
 }
 
-function getFavHeaderButton(){
-  return Array.from(document.querySelectorAll<HTMLButtonElement>('.x-icons>button')).find(b=>b.textContent?.includes('Favoris'))||null;
-}
-
-function refreshFavBadge(){
-  const fav=getFavHeaderButton();if(!fav)return;
-  fav.style.position='relative';
-  let badge=fav.querySelector('.fav-count') as HTMLElement|null;
-  const n=readFavs().length;
-  if(!badge){badge=document.createElement('b');badge.className='fav-count';fav.appendChild(badge)}
-  badge.textContent=String(n);
-  badge.setAttribute('aria-label',`${n} produit${n>1?'s':''} favori${n>1?'s':''}`);
-  badge.style.display=n?'grid':'none';
-}
-
-function syncHearts(){
-  const names=new Set(readFavs().map(x=>x.name));
-  document.querySelectorAll<HTMLElement>('.x-grid article').forEach(article=>{
-    const name=article.querySelector('h3')?.textContent?.trim()||'';
-    const heart=article.querySelector<HTMLElement>('.fav');if(!heart)return;
-    const selected=names.has(name);
-    heart.classList.toggle('liked',selected);
-    heart.setAttribute('aria-pressed',selected?'true':'false');
-    heart.setAttribute('title',selected?'Retirer des favoris':'Ajouter aux favoris');
-    heart.textContent=selected?'♥':'♡';
-    heart.style.cursor='pointer';
-    heart.style.pointerEvents='auto';
-    heart.style.background=selected?'#e84f7d':'#fff';
-    heart.style.color=selected?'#fff':'#d94d79';
-    heart.style.borderColor=selected?'#e84f7d':'#111';
-  });
-}
-
-function toggleFavorite(btn:HTMLElement){
-  const item=parseCard(btn);if(!item)return;
-  const items=readFavs();const i=items.findIndex(x=>x.name===item.name);
-  if(i>=0)items.splice(i,1);else items.push(item);
-  writeFavs(items);
-  syncHearts();
-  refreshFavBadge();
-}
-
+function getFavHeaderButton(){return Array.from(document.querySelectorAll<HTMLButtonElement>('.x-icons>button')).find(b=>b.textContent?.includes('Favoris'))||null}
+function refreshFavBadge(){const fav=getFavHeaderButton();if(!fav)return;fav.style.position='relative';let badge=fav.querySelector('.fav-count') as HTMLElement|null;const n=readFavs().length;if(!badge){badge=document.createElement('b');badge.className='fav-count';fav.appendChild(badge)}badge.textContent=String(n);badge.setAttribute('aria-label',`${n} produit${n>1?'s':''} favori${n>1?'s':''}`);badge.style.display=n?'grid':'none'}
+function syncHearts(){const names=new Set(readFavs().map(x=>x.name));document.querySelectorAll<HTMLElement>('.x-grid article').forEach(article=>{const name=article.querySelector('h3')?.textContent?.trim()||'';const heart=article.querySelector<HTMLElement>('.fav');if(!heart)return;const selected=names.has(name);heart.classList.toggle('liked',selected);heart.setAttribute('aria-pressed',selected?'true':'false');heart.setAttribute('title',selected?'Retirer des favoris':'Ajouter aux favoris');heart.textContent=selected?'♥':'♡';heart.style.cursor='pointer';heart.style.pointerEvents='auto';heart.style.background=selected?'#e84f7d':'#fff';heart.style.color=selected?'#fff':'#d94d79';heart.style.borderColor=selected?'#e84f7d':'#111'})}
+function toggleFavorite(btn:HTMLElement){const item=parseCard(btn);if(!item)return;const items=readFavs();const i=items.findIndex(x=>x.name===item.name);if(i>=0)items.splice(i,1);else items.push(item);writeFavs(items);syncHearts();refreshFavBadge()}
 function closeFavs(){document.querySelector('.favorites-panel-wrap')?.remove();document.body.classList.remove('favorites-open')}
-function renderFavs(){
-  closeFavs();const items=readFavs();document.body.classList.add('favorites-open');const wrap=document.createElement('div');wrap.className='favorites-panel-wrap';
-  wrap.innerHTML=`<aside class="favorites-panel"><header><div><small>VOTRE SÉLECTION</small><h2>Mes favoris <sup>${items.length}</sup></h2></div><button class="favorites-close">×</button></header><div class="favorites-list">${items.length?items.map((p,i)=>`<article><div class="fav-img"><img src="${p.image}" alt="${p.name}"></div><div><small>${p.category}</small><h3>${p.name}</h3><b>${p.price}</b></div><button data-fav-remove="${i}">♡</button></article>`).join(''):`<div class="favorites-empty"><span>♡</span><b>Aucun favori pour le moment</b><p>Cliquez sur le cœur d’un produit pour le retrouver ici.</p></div>`}</div><footer><button class="favorites-continue">Continuer mes achats</button></footer></aside>`;
-  document.body.appendChild(wrap);
-  wrap.addEventListener('click',e=>{const t=e.target as HTMLElement;if(t===wrap||t.closest('.favorites-close')||t.closest('.favorites-continue')){closeFavs();return}const r=t.closest('[data-fav-remove]') as HTMLElement|null;if(r){const a=readFavs();a.splice(Number(r.dataset.favRemove),1);writeFavs(a);renderFavs();refreshFavBadge();syncHearts()}})
-}
+function renderFavs(){closeFavs();const items=readFavs();document.body.classList.add('favorites-open');const wrap=document.createElement('div');wrap.className='favorites-panel-wrap';wrap.innerHTML=`<aside class="favorites-panel"><header><div><small>VOTRE SÉLECTION</small><h2>Mes favoris <sup>${items.length}</sup></h2></div><button class="favorites-close">×</button></header><div class="favorites-list">${items.length?items.map((p,i)=>`<article><div class="fav-img"><img src="${p.image}" alt="${p.name}"></div><div><small>${p.category}</small><h3>${p.name}</h3><b>${p.price}</b></div><button data-fav-remove="${i}">♡</button></article>`).join(''):`<div class="favorites-empty"><span>♡</span><b>Aucun favori pour le moment</b><p>Cliquez sur le cœur d’un produit pour le retrouver ici.</p></div>`}</div><footer><button class="favorites-continue">Continuer mes achats</button></footer></aside>`;document.body.appendChild(wrap);wrap.addEventListener('click',e=>{const t=e.target as HTMLElement;if(t===wrap||t.closest('.favorites-close')||t.closest('.favorites-continue')){closeFavs();return}const r=t.closest('[data-fav-remove]') as HTMLElement|null;if(r){const a=readFavs();a.splice(Number(r.dataset.favRemove),1);writeFavs(a);renderFavs();refreshFavBadge();syncHearts()}})}
+function ensureLogout(){const icons=document.querySelector('.x-store .x-icons');if(!icons||icons.querySelector('.client-logout'))return;const b=document.createElement('button');b.className='client-logout';b.innerHTML='↪<small>Déconnexion</small>';b.addEventListener('click',()=>{sessionStorage.clear();location.reload()});icons.appendChild(b)}
 
-function ensureLogout(){
-  const icons=document.querySelector('.x-store .x-icons');if(!icons||icons.querySelector('.client-logout'))return;
-  const b=document.createElement('button');b.className='client-logout';b.innerHTML='↪<small>Déconnexion</small>';
-  b.addEventListener('click',()=>{sessionStorage.clear();location.reload()});icons.appendChild(b)
-}
-function enhance(){ensureLogout();refreshFavBadge();syncHearts()}
+function promoCard(p:PromoProduct){const d=Math.max(1,Math.min(90,Number(p.discount_percent)||10));const promo=Math.max(0,Number(p.price)*(1-d/100));return `<article class="admin-promo-client" data-admin-promo-id="${p.id}"><div class="pimg"><img src="${p.image_url||''}" alt="${p.name}"><button class="fav" aria-label="Favori">♡</button><span class="admin-promo-badge">-${d}%</span></div><div class="info"><small>${p.category||'OSRAH'}</small><h3>${p.name}</h3><p>${p.description||''}</p><div class="promo-price"><span>${promo.toFixed(0)} DH</span><del>${Number(p.price).toFixed(0)} DH</del></div><button>Ajouter au panier</button></div></article>`}
+async function injectAdminPromotions(){const active=Array.from(document.querySelectorAll<HTMLButtonElement>('.x-nav button')).find(b=>b.classList.contains('on'));if(active?.textContent?.trim()!=='Promotions')return;const grid=document.querySelector('.x-grid');if(!grid)return;try{const r=await fetch('http://localhost:5000/api/products');if(!r.ok)return;const data:PromoProduct[]=await r.json();const promos=data.filter(p=>p.promotion);grid.querySelectorAll('.admin-promo-client').forEach(x=>x.remove());const existing=new Set(Array.from(grid.querySelectorAll('h3')).map(x=>x.textContent?.trim()));promos.filter(p=>!existing.has(p.name)).forEach(p=>grid.insertAdjacentHTML('beforeend',promoCard(p)));syncHearts()}catch{}}
+function enhance(){ensureLogout();refreshFavBadge();syncHearts();injectAdminPromotions()}
 
-document.addEventListener('click',e=>{
-  const t=e.target as HTMLElement|null;if(!t)return;
-  const heart=t.closest('.x-grid article .fav') as HTMLElement|null;
-  if(heart){e.preventDefault();e.stopImmediatePropagation();toggleFavorite(heart);return}
-  const topFav=t.closest('.x-icons>button') as HTMLElement|null;
-  if(topFav&&topFav.textContent?.includes('Favoris')){e.preventDefault();e.stopImmediatePropagation();renderFavs();return}
-},true);
-
+document.addEventListener('click',e=>{const t=e.target as HTMLElement|null;if(!t)return;const heart=t.closest('.x-grid article .fav') as HTMLElement|null;if(heart){e.preventDefault();e.stopImmediatePropagation();toggleFavorite(heart);return}const topFav=t.closest('.x-icons>button') as HTMLElement|null;if(topFav&&topFav.textContent?.includes('Favoris')){e.preventDefault();e.stopImmediatePropagation();renderFavs();return}const promoNav=t.closest('.x-nav button') as HTMLElement|null;if(promoNav?.textContent?.trim()==='Promotions')setTimeout(injectAdminPromotions,120)},true);
 window.addEventListener('load',()=>{setTimeout(enhance,100);setTimeout(enhance,500)});
 document.addEventListener('click',()=>setTimeout(enhance,80),false);
 window.addEventListener('storage',e=>{if(e.key===FAV_KEY)enhance()});
