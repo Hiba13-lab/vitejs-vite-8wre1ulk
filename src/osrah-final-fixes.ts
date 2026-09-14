@@ -1,4 +1,5 @@
 import './promo-switch-fix.ts';
+import './payment-demo-visual.ts';
 
 function hideButtonByText(selector:string,label:string){
   document.querySelectorAll<HTMLElement>(selector).forEach(el=>{
