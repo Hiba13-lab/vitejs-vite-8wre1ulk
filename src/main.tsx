@@ -10,6 +10,7 @@ import './login-cleanup.css'
 import './presentation-visual-fixes.css'
 import './promo-home-safe.css'
 import './admin-premium.css'
+import './admin-dashboard-compact.css'
 import './cart-premium.css'
 import './velvet-style.css'
 // Keep pack styles after the global client theme so the pack cards are not overridden.
