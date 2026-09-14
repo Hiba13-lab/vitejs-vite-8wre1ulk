@@ -11,15 +11,15 @@ import './login-cleanup.css'
 import './presentation-visual-fixes.css'
 import './promo-home-safe.css'
 import './admin-premium.css'
-import './product-overrides.ts'
-import './presentation-visual-fixes.ts'
+import './cart-premium.css'
+import './velvet-style.css'
+
+// Scripts fonctionnels gardés volontairement simples et sans observateurs lourds.
 import './cart-premium.ts'
-import './pack-cart-sync.ts'
-import './pack-navigation.ts'
 import './admin-safe.ts'
 import './osrah-final-fixes.ts'
 import './client-enhancements.ts'
-import './velvet-style.css'
+
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
