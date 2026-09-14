@@ -25,6 +25,7 @@ import './admin-auto-dashboard.ts'
 import './osrah-final-fixes.ts'
 import './client-enhancements.ts'
 import './pack-navigation.ts'
+import './hero-startup-fix.ts'
 
 import AppExact from './AppExact.tsx'
 
