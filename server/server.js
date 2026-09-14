@@ -39,11 +39,7 @@ function seedExtraProducts() {
   for (const extra of extras) {
     const exists = products.some((p) => String(p.name).toLowerCase() === String(extra.name).toLowerCase());
     if (!exists) {
-      products.push({
-        ...extra,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      });
+      products.push({ ...extra, promotion: false, discount_percent: 0, active: true, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
       changed = true;
     }
   }
@@ -68,27 +64,28 @@ app.get("/api/products/:id", (req, res) => {
   res.json(product);
 });
 app.post("/api/products", (req, res) => {
-  const { name, description = "", price, stock = 0, category = "", image_url = "" } = req.body;
+  const { name, description = "", price, stock = 0, category = "", image_url = "", promotion = false, discount_percent = 0, active = true } = req.body;
   if (!name || price === undefined || price === null || price === "") return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
-  const numericPrice = Number(price), numericStock = Number(stock);
+  const numericPrice = Number(price), numericStock = Number(stock), numericDiscount = Math.max(0, Math.min(90, Number(discount_percent) || 0));
   if (Number.isNaN(numericPrice) || numericPrice < 0) return res.status(400).json({ message: "Prix invalide" });
   if (!Number.isInteger(numericStock) || numericStock < 0) return res.status(400).json({ message: "Stock invalide" });
   const products = readProducts();
   const nextId = products.length ? Math.max(...products.map((p) => p.id)) + 1 : 1;
   const now = new Date().toISOString();
-  const product = { id: nextId, name: name.trim(), description, price: numericPrice, stock: numericStock, category, image_url, created_at: now, updated_at: now };
+  const product = { id: nextId, name: name.trim(), description, price: numericPrice, stock: numericStock, category, image_url, promotion: Boolean(promotion), discount_percent: numericDiscount, active: Boolean(active), created_at: now, updated_at: now };
   products.push(product); writeProducts(products);
   res.status(201).json({ message: "Produit ajouté avec succès ✅", product });
 });
 app.put("/api/products/:id", (req, res) => {
   const id = Number(req.params.id), products = readProducts(), index = products.findIndex((p) => p.id === id);
   if (index === -1) return res.status(404).json({ message: "Produit introuvable" });
-  const { name, description = "", price, stock = 0, category = "", image_url = "" } = req.body;
+  const current = products[index];
+  const { name = current.name, description = current.description || "", price = current.price, stock = current.stock || 0, category = current.category || "", image_url = current.image_url || "", promotion = current.promotion || false, discount_percent = current.discount_percent || 0, active = current.active !== false } = req.body;
   if (!name || price === undefined || price === null || price === "") return res.status(400).json({ message: "Le nom et le prix sont obligatoires" });
-  const numericPrice = Number(price), numericStock = Number(stock);
+  const numericPrice = Number(price), numericStock = Number(stock), numericDiscount = Math.max(0, Math.min(90, Number(discount_percent) || 0));
   if (Number.isNaN(numericPrice) || numericPrice < 0) return res.status(400).json({ message: "Prix invalide" });
   if (!Number.isInteger(numericStock) || numericStock < 0) return res.status(400).json({ message: "Stock invalide" });
-  products[index] = { ...products[index], name: name.trim(), description, price: numericPrice, stock: numericStock, category, image_url, updated_at: new Date().toISOString() };
+  products[index] = { ...current, name: String(name).trim(), description, price: numericPrice, stock: numericStock, category, image_url, promotion: Boolean(promotion), discount_percent: numericDiscount, active: Boolean(active), updated_at: new Date().toISOString() };
   writeProducts(products); res.json({ message: "Produit modifié avec succès ✅", product: products[index] });
 });
 app.delete("/api/products/:id", (req, res) => {
@@ -108,20 +105,9 @@ app.post("/api/orders", (req, res) => {
   const order = {
     id: nextId,
     reference: `OSR-${nextId}`,
-    customer: {
-      name: String(customer.name || "Client OSRAH"),
-      phone: String(customer.phone || ""),
-      address: String(customer.address || ""),
-      city: String(customer.city || ""),
-      email: String(customer.email || "client@osrah.ma")
-    },
+    customer: { name: String(customer.name || "Client OSRAH"), phone: String(customer.phone || ""), address: String(customer.address || ""), city: String(customer.city || ""), email: String(customer.email || "client@osrah.ma") },
     items: items.map((item) => ({ name: String(item.name || "Produit"), price: Number(item.price || 0), qty: Number(item.qty || 1), image: String(item.image || ""), category: String(item.category || "") })),
-    payment_method: String(payment_method || ""),
-    subtotal: Number(subtotal || 0),
-    shipping: Number(shipping || 0),
-    total: Number(total || 0),
-    status: "Nouvelle",
-    created_at: new Date().toISOString()
+    payment_method: String(payment_method || ""), subtotal: Number(subtotal || 0), shipping: Number(shipping || 0), total: Number(total || 0), status: "Nouvelle", created_at: new Date().toISOString()
   };
   orders.push(order); writeOrders(orders);
   res.status(201).json({ message: "Commande enregistrée avec succès ✅", order });
