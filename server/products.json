@@ -272,7 +272,7 @@
     "category": "Corps",
     "image_url": "https://osrahcosmetics.ma/cdn/shop/products/Designsanstitre-142.jpg?v=1768083698&width=1946",
     "created_at": "2026-09-07T11:26:17.972Z",
-    "updated_at": "2026-09-07T11:26:17.972Z"
+    "updated_at": "2026-09-14T16:01:28.153Z"
   },
   {
     "id": 26,
@@ -290,11 +290,11 @@
     "name": "Lait démaquillant Subliderm",
     "description": "Lait démaquillant Subliderm pour tous types de peaux.",
     "price": 49,
-    "stock": 22,
+    "stock": 0,
     "category": "Visage",
     "image_url": "https://osrahcosmetics.ma/cdn/shop/files/1-09_220c1547-762f-4587-807d-27152c74edba.webp?v=1769454500&width=1946",
     "created_at": "2026-09-07T11:26:17.972Z",
-    "updated_at": "2026-09-07T11:26:17.972Z"
+    "updated_at": "2026-09-14T16:43:34.521Z"
   },
   {
     "id": 28,
@@ -305,6 +305,17 @@
     "category": "Cheveux",
     "image_url": "https://osrahcosmetics.ma/cdn/shop/files/1-13_69ba91f2-8616-4f8b-a764-664b7daf79cb.webp?v=1769266736&width=1946",
     "created_at": "2026-09-07T11:26:17.972Z",
-    "updated_at": "2026-09-07T11:26:17.972Z"
+    "updated_at": "2026-09-14T22:51:26.509Z"
+  },
+  {
+    "id": 29,
+    "name": "creme",
+    "description": "",
+    "price": 55,
+    "stock": 10,
+    "category": "Visage",
+    "image_url": "",
+    "created_at": "2026-09-14T22:52:27.513Z",
+    "updated_at": "2026-09-14T22:52:27.513Z"
   }
 ]

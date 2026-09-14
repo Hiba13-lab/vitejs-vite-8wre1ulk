@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./final.css";
+import heroOsrah from "./assets/hero.png";
 
 type Product = { id:number; name:string; description:string; price:number; stock:number; category:string; image:string };
 type ApiProduct = { id:number; name:string; description:string; price:number; stock:number; category:string; image_url?:string };
@@ -12,7 +13,7 @@ const HAIR_2 = "https://osrahcosmetics.ma/cdn/shop/files/1-14_306870ad-c7d2-45bb
 const HAIR_3 = "https://osrahcosmetics.ma/cdn/shop/files/1-12.webp?v=1769264215&width=1946";
 const HAIR_4 = "https://osrahcosmetics.ma/cdn/shop/files/1-13_69ba91f2-8616-4f8b-a764-664b7daf79cb.webp?v=1769266736&width=1946";
 const HAIR_5 = "https://osrahcosmetics.ma/cdn/shop/files/1-24_507f4f59-979c-4732-9cf9-5f8a5ffc2090.webp?v=1769446245&width=1946";
-const HERO_IMG = "https://osrahcosmetics.ma/cdn/shop/files/69ff4d88-a340-4379-b528-b7f3d5e398fe.png?v=1780763528&width=1254";
+const HERO_IMG = heroOsrah;
 const SOLAR_IMG = "https://osrahcosmetics.ma/cdn/shop/files/1-13_69ba91f2-8616-4f8b-a764-664b7daf79cb.webp?v=1769266736&width=1946";
 const FALLBACK_IMAGE = HAIR_1;
 
@@ -136,7 +137,7 @@ function App(){
     <header className="store-header"><Brand/><div className="search-box"><input value={search} onChange={e=>setSearch(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")runSearch();}} placeholder="Rechercher un produit, une catégorie..."/><button onClick={runSearch}>⌕</button></div><div className="header-icons"><button onClick={()=>setToast("Espace client connecté")}>♙<small>Espace client</small></button><button onClick={()=>setToast(`${favorites.length} favori(s)`) }>♡<small>Favoris</small></button><button className="cart-head" onClick={()=>setPage("payment")}>🛍<b>{cart.length}</b><small>Panier</small></button></div></header>
     <nav className="store-nav">{["Accueil","Visage","Corps","Cheveux","Solaire","Parfums","Nos marques","Nouveautés","Promotions"].map(item=><button key={item} onClick={()=>{if(item==="Accueil"){setCategory("Tous");setCollectionMode("all");window.scrollTo({top:0,behavior:"smooth"});}else if(item==="Visage")selectCategory("Soin visage");else if(item==="Corps")selectCategory("Corps et douche");else if(item==="Cheveux")selectCategory("Cheveux");else if(item==="Solaire")selectCategory("Solaire");else if(item==="Parfums")selectCategory("Parfum & senteurs");else if(item==="Nouveautés")openCollection("new");else if(item==="Promotions")openCollection("sale");else setToast("OSRAH Cosmétiques");}}>{item}</button>)}</nav>
 
-    <section className="hero-osrah"><div className="hero-copy"><small>OSRAH COSMETICS</small><h1>Révélez votre<br/><em>beauté naturelle</em></h1><p>Des soins authentiques pour une peau et des cheveux en pleine santé.</p><button className="hero-cta" onClick={()=>openCollection("all")}>Découvrir nos produits →</button></div><div className="hero-visual"><img src={HERO_IMG} alt="OSRAH Cosmétiques"/></div></section>
+    <section className="hero-osrah"><div className="hero-copy"><small>OSRAH COSMETICS</small><h1>Révélez votre<br/><em>beauté naturelle</em></h1><p>Des soins authentiques pour une peau et des cheveux en pleine santé.</p><button className="hero-cta" onClick={()=>openCollection("all")}>Découvrir nos produits →</button></div><div className="hero-visual" style={{backgroundImage:`url(${HERO_IMG})`,backgroundSize:"cover",backgroundPosition:"center",backgroundRepeat:"no-repeat"}}></div></section>
 
     <section className="category-circles">{[
       ["Visage",SOLAR_IMG,"Soin visage"],["Corps",HERO_IMG,"Corps et douche"],["Cheveux",HAIR_2,"Cheveux"],["Solaire",SOLAR_IMG,"Solaire"],["Parfums",HERO_IMG,"Parfum & senteurs"],["Nos marques",HAIR_1,"Tous"],["Nouveautés",HAIR_3,"new"],["Promotions",HERO_IMG,"sale"]
