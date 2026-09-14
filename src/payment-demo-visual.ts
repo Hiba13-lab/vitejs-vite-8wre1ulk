@@ -8,25 +8,46 @@ function applyPaymentVisual(){
     if(btn.textContent?.trim()==='PayPal')btn.remove();
   });
 
-  const cardButton=Array.from(aside.querySelectorAll<HTMLButtonElement>('button')).find(btn=>btn.textContent?.trim()==='Carte bancaire');
-  if(!cardButton)return;
+  const buttons=Array.from(aside.querySelectorAll<HTMLButtonElement>('button'));
+  const cardButton=buttons.find(btn=>btn.textContent?.trim()==='Carte bancaire');
+  const deliveryButton=buttons.find(btn=>btn.textContent?.trim()==='Paiement à la livraison');
+  if(!cardButton||!deliveryButton)return;
 
-  let demo=aside.querySelector<HTMLElement>('.payment-demo-visual');
-  if(!demo){
-    demo=document.createElement('div');
-    demo.className='payment-demo-visual';
-    demo.innerHTML=`
-      <div class="payment-demo-note">Démonstration visuelle uniquement — aucune donnée bancaire enregistrée</div>
-      <label>Nom sur la carte<input disabled placeholder="NOM PRÉNOM"></label>
-      <label>Numéro de carte<input disabled placeholder="0000 0000 0000 0000"></label>
+  let cardForm=aside.querySelector<HTMLElement>('.payment-demo-visual.card-fields');
+  if(!cardForm){
+    cardForm=document.createElement('div');
+    cardForm.className='payment-demo-visual card-fields';
+    cardForm.innerHTML=`
+      <div class="payment-demo-note">Démonstration uniquement — aucune transaction réelle</div>
+      <label>Nom sur la carte<input type="text" placeholder="Nom et prénom" autocomplete="off"></label>
+      <label>Numéro de carte<input type="text" inputmode="numeric" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="off"></label>
       <div class="payment-demo-row">
-        <label>Date d’expiration<input disabled placeholder="MM/AA"></label>
-        <label>CVV<input disabled placeholder="•••"></label>
+        <label>Date d’expiration<input type="text" inputmode="numeric" placeholder="MM/AA" maxlength="5" autocomplete="off"></label>
+        <label>CVV<input type="password" inputmode="numeric" placeholder="123" maxlength="4" autocomplete="off"></label>
       </div>`;
-    cardButton.insertAdjacentElement('afterend',demo);
+    cardButton.insertAdjacentElement('afterend',cardForm);
   }
 
-  demo.style.display=cardButton.classList.contains('active')?'grid':'none';
+  let deliveryForm=aside.querySelector<HTMLElement>('.payment-demo-visual.delivery-fields');
+  if(!deliveryForm){
+    deliveryForm=document.createElement('div');
+    deliveryForm.className='payment-demo-visual delivery-fields';
+    deliveryForm.innerHTML=`
+      <div class="payment-demo-note delivery-note">Informations de livraison</div>
+      <label>Nom complet<input type="text" placeholder="Votre nom complet" autocomplete="off"></label>
+      <label>Numéro de téléphone<input type="tel" placeholder="06 XX XX XX XX" autocomplete="off"></label>
+      <label>Adresse de livraison<input type="text" placeholder="Quartier, rue, numéro..." autocomplete="off"></label>
+      <label>Ville<input type="text" placeholder="Votre ville" autocomplete="off"></label>`;
+    deliveryButton.insertAdjacentElement('afterend',deliveryForm);
+  }
+
+  cardForm.style.display=cardButton.classList.contains('active')?'grid':'none';
+  deliveryForm.style.display=deliveryButton.classList.contains('active')?'grid':'none';
+
+  const confirm=aside.querySelector<HTMLButtonElement>('.confirm');
+  if(confirm){
+    confirm.textContent=deliveryButton.classList.contains('active')?'CONFIRMER LA COMMANDE':'CONFIRMER LE PAIEMENT';
+  }
 }
 
 document.addEventListener('click',()=>setTimeout(applyPaymentVisual,20),true);
