@@ -2,38 +2,19 @@
 .x-promos>button{height:250px!important;border:0!important;border-radius:16px!important;position:relative!important;overflow:hidden!important;display:block!important;text-align:left!important;padding:0!important;background-repeat:no-repeat!important;box-shadow:0 10px 28px rgba(81,25,47,.08)!important;transition:.2s ease!important}
 .x-promos>button>*{visibility:hidden!important}
 
-/* Ici on affiche un PACK complet, pas plusieurs produits séparés */
+/* Pack image on the left, readable copy on the right */
 .x-promos>button:first-child{background-color:#f8e7e4!important;background-image:url('https://osrahcosmetics.ma/cdn/shop/files/WhatsAppImage2026-01-27at12.32.09.jpg?v=1769610198&width=1248')!important;background-size:48% auto!important;background-position:3% center!important}
 .x-promos>button:nth-child(2){background-color:#f7dce4!important;background-image:url('https://osrahcosmetics.ma/cdn/shop/files/4309dcea-8f26-4092-b7fd-a4af762f640e.png?v=1778452571&width=1122')!important;background-size:48% auto!important;background-position:3% center!important}
 
-.x-promos>button::before{visibility:visible!important;white-space:pre-line!important;position:absolute!important;left:54%!important;right:5%!important;top:34px!important;color:#4b1028!important;font-family:Georgia,serif!important;font-size:28px!important;line-height:1.08!important;font-weight:600!important;z-index:2!important}
+.x-promos>button::before{visibility:visible!important;white-space:pre-line!important;position:absolute!important;left:54%!important;right:4%!important;top:30px!important;color:#4b1028!important;font-family:Georgia,serif!important;font-size:25px!important;line-height:1.04!important;font-weight:600!important;z-index:2!important;max-height:128px!important;overflow:hidden!important}
 .x-promos>button:first-child::before{content:'PACK ROUTINE BEAUTÉ\A Une peau éclatante\A au quotidien'!important}
-.x-promos>button:nth-child(2)::before{content:'PACK SOIN & BIEN-ÊTRE\A Prenez soin\A de vous'!important}
+.x-promos>button:nth-child(2)::before{content:'PACK SOIN & BIEN-ÊTRE\A Prenez soin de vous'!important}
 
-.x-promos>button::after{visibility:visible!important;position:absolute!important;left:54%!important;bottom:31px!important;background:#4b1028!important;color:#fff!important;border-radius:8px!important;padding:11px 19px!important;font-size:11px!important;font-weight:800!important;z-index:2!important}
+.x-promos>button::after{visibility:visible!important;position:absolute!important;left:54%!important;bottom:24px!important;background:#4b1028!important;color:#fff!important;border-radius:8px!important;padding:12px 18px!important;font-size:11px!important;line-height:1!important;font-weight:800!important;z-index:3!important;box-shadow:0 6px 16px rgba(75,16,40,.12)!important}
 .x-promos>button:first-child::after{content:'Découvrir le pack →'!important}
 .x-promos>button:nth-child(2)::after{content:'Voir le pack →'!important}
-
 .x-promos>button:hover{transform:translateY(-2px)!important;box-shadow:0 14px 34px rgba(81,25,47,.13)!important}
 
-@media(max-width:1050px){
-  .x-promos>button{height:225px!important}
-  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:46% auto!important;background-position:2% center!important}
-  .x-promos>button::before{left:51%!important;font-size:23px!important}
-  .x-promos>button::after{left:51%!important}
-}
-
-@media(max-width:760px){
-  .x-promos{grid-template-columns:1fr!important}
-  .x-promos>button{height:240px!important}
-  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:47% auto!important;background-position:2% center!important}
-  .x-promos>button::before{left:52%!important;font-size:23px!important}
-  .x-promos>button::after{left:52%!important}
-}
-
-@media(max-width:500px){
-  .x-promos>button{height:225px!important}
-  .x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:48% auto!important;background-position:-3% center!important}
-  .x-promos>button::before{left:48%!important;right:3%!important;top:28px!important;font-size:18px!important}
-  .x-promos>button::after{left:48%!important;bottom:27px!important;padding:9px 12px!important;font-size:10px!important}
-}
+@media(max-width:1050px){.x-promos>button{height:225px!important}.x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:46% auto!important;background-position:2% center!important}.x-promos>button::before{left:51%!important;font-size:21px!important;top:27px!important;max-height:110px!important}.x-promos>button::after{left:51%!important;bottom:22px!important}}
+@media(max-width:760px){.x-promos{grid-template-columns:1fr!important}.x-promos>button{height:240px!important}.x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:47% auto!important;background-position:2% center!important}.x-promos>button::before{left:52%!important;font-size:21px!important}.x-promos>button::after{left:52%!important}}
+@media(max-width:500px){.x-promos>button{height:225px!important}.x-promos>button:first-child,.x-promos>button:nth-child(2){background-size:48% auto!important;background-position:-3% center!important}.x-promos>button::before{left:48%!important;right:3%!important;top:25px!important;font-size:17px!important;max-height:105px!important}.x-promos>button::after{left:48%!important;bottom:22px!important;padding:10px 12px!important;font-size:10px!important}}
