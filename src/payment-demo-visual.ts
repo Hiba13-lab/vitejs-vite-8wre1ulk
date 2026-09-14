@@ -1,3 +1,5 @@
+import './payment-demo-visual.css';
+
 function applyPaymentVisual(){
   const aside=document.querySelector<HTMLElement>('.x-pay main aside');
   if(!aside)return;
@@ -14,7 +16,7 @@ function applyPaymentVisual(){
     demo=document.createElement('div');
     demo.className='payment-demo-visual';
     demo.innerHTML=`
-      <div class="payment-demo-note">Démonstration visuelle uniquement</div>
+      <div class="payment-demo-note">Démonstration visuelle uniquement — aucune donnée bancaire enregistrée</div>
       <label>Nom sur la carte<input disabled placeholder="NOM PRÉNOM"></label>
       <label>Numéro de carte<input disabled placeholder="0000 0000 0000 0000"></label>
       <div class="payment-demo-row">
