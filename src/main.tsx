@@ -22,6 +22,7 @@ import './promo-switch-fix.ts'
 import './admin-safe.ts'
 import './osrah-final-fixes.ts'
 import './client-enhancements.ts'
+import './pack-navigation.ts'
 
 import AppExact from './AppExact.tsx'
 
