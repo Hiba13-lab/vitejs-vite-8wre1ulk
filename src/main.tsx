@@ -18,6 +18,8 @@ import './pack-cart-sync.ts'
 import './pack-navigation.ts'
 import './admin-safe.ts'
 import './osrah-final-fixes.ts'
+import './client-enhancements.ts'
+import './velvet-style.css'
 import AppExact from './AppExact.tsx'
 
 createRoot(document.getElementById('root')!).render(
