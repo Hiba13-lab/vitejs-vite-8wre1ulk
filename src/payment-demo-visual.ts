@@ -1,27 +1,19 @@
 import './payment-demo-visual.css';
 
-function setNativeValue(input: HTMLInputElement, value: string){
-  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
-  setter?.call(input, value);
-  input.dispatchEvent(new Event('input', { bubbles: true }));
-  input.dispatchEvent(new Event('change', { bubbles: true }));
-}
+function emitDeliveryDetails(){
+  const form=document.querySelector<HTMLElement>('.payment-demo-visual.delivery-fields');
+  if(!form)return;
+  const inputs=form.querySelectorAll<HTMLInputElement>('input');
+  if(inputs.length<4)return;
 
-function syncDeliveryToReact(){
-  const deliveryForm=document.querySelector<HTMLElement>('.payment-demo-visual.delivery-fields');
-  const reactForm=document.querySelector<HTMLElement>('.x-customer-form');
-  if(!deliveryForm||!reactForm)return;
-
-  const visualInputs=deliveryForm.querySelectorAll<HTMLInputElement>('input');
-  const reactInputs=reactForm.querySelectorAll<HTMLInputElement>('input');
-  if(visualInputs.length<4||reactInputs.length<4)return;
-
-  // Visual order: name, phone, address, city
-  // React order: name, phone, city, address
-  setNativeValue(reactInputs[0], visualInputs[0].value);
-  setNativeValue(reactInputs[1], visualInputs[1].value);
-  setNativeValue(reactInputs[2], visualInputs[3].value);
-  setNativeValue(reactInputs[3], visualInputs[2].value);
+  window.dispatchEvent(new CustomEvent('osrah:delivery-details',{
+    detail:{
+      name:inputs[0].value.trim(),
+      phone:inputs[1].value.trim(),
+      address:inputs[2].value.trim(),
+      city:inputs[3].value.trim()
+    }
+  }));
 }
 
 function applyPaymentVisual(){
@@ -64,8 +56,8 @@ function applyPaymentVisual(){
       <label>Ville<input type="text" placeholder="Votre ville" autocomplete="off"></label>`;
     deliveryButton.insertAdjacentElement('afterend',deliveryForm);
     deliveryForm.querySelectorAll('input').forEach(input=>{
-      input.addEventListener('input',syncDeliveryToReact);
-      input.addEventListener('change',syncDeliveryToReact);
+      input.addEventListener('input',emitDeliveryDetails);
+      input.addEventListener('change',emitDeliveryDetails);
     });
   }
 
@@ -75,7 +67,11 @@ function applyPaymentVisual(){
   const confirm=aside.querySelector<HTMLButtonElement>('.confirm');
   if(confirm){
     confirm.textContent=deliveryButton.classList.contains('active')?'CONFIRMER LA COMMANDE':'CONFIRMER LE PAIEMENT';
-    confirm.addEventListener('click',syncDeliveryToReact,{capture:true,once:false});
+    if(!confirm.dataset.deliveryBound){
+      confirm.addEventListener('mousedown',emitDeliveryDetails,true);
+      confirm.addEventListener('touchstart',emitDeliveryDetails,true);
+      confirm.dataset.deliveryBound='1';
+    }
   }
 }
 
