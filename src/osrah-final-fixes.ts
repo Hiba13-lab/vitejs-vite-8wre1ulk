@@ -1,3 +1,5 @@
+import './promo-switch-fix.ts';
+
 function hideButtonByText(selector:string,label:string){
   document.querySelectorAll<HTMLElement>(selector).forEach(el=>{
     if(el.textContent?.trim()===label)el.style.display='none';
