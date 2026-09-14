@@ -17,6 +17,7 @@ import './pack-promos.css'
 
 // Scripts fonctionnels gardés volontairement simples et sans observateurs lourds.
 import './cart-premium.ts'
+import './promo-switch-fix.ts'
 import './admin-safe.ts'
 import './osrah-final-fixes.ts'
 import './client-enhancements.ts'
