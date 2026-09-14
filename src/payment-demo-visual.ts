@@ -1,5 +1,29 @@
 import './payment-demo-visual.css';
 
+function setNativeValue(input: HTMLInputElement, value: string){
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+  setter?.call(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+function syncDeliveryToReact(){
+  const deliveryForm=document.querySelector<HTMLElement>('.payment-demo-visual.delivery-fields');
+  const reactForm=document.querySelector<HTMLElement>('.x-customer-form');
+  if(!deliveryForm||!reactForm)return;
+
+  const visualInputs=deliveryForm.querySelectorAll<HTMLInputElement>('input');
+  const reactInputs=reactForm.querySelectorAll<HTMLInputElement>('input');
+  if(visualInputs.length<4||reactInputs.length<4)return;
+
+  // Visual order: name, phone, address, city
+  // React order: name, phone, city, address
+  setNativeValue(reactInputs[0], visualInputs[0].value);
+  setNativeValue(reactInputs[1], visualInputs[1].value);
+  setNativeValue(reactInputs[2], visualInputs[3].value);
+  setNativeValue(reactInputs[3], visualInputs[2].value);
+}
+
 function applyPaymentVisual(){
   const aside=document.querySelector<HTMLElement>('.x-pay main aside');
   if(!aside)return;
@@ -39,6 +63,10 @@ function applyPaymentVisual(){
       <label>Adresse de livraison<input type="text" placeholder="Quartier, rue, numéro..." autocomplete="off"></label>
       <label>Ville<input type="text" placeholder="Votre ville" autocomplete="off"></label>`;
     deliveryButton.insertAdjacentElement('afterend',deliveryForm);
+    deliveryForm.querySelectorAll('input').forEach(input=>{
+      input.addEventListener('input',syncDeliveryToReact);
+      input.addEventListener('change',syncDeliveryToReact);
+    });
   }
 
   cardForm.style.display=cardButton.classList.contains('active')?'grid':'none';
@@ -47,6 +75,7 @@ function applyPaymentVisual(){
   const confirm=aside.querySelector<HTMLButtonElement>('.confirm');
   if(confirm){
     confirm.textContent=deliveryButton.classList.contains('active')?'CONFIRMER LA COMMANDE':'CONFIRMER LE PAIEMENT';
+    confirm.addEventListener('click',syncDeliveryToReact,{capture:true,once:false});
   }
 }
 
