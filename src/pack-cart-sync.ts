@@ -4,11 +4,11 @@ type CartItem={name:string;price:number;image:string;category:string;qty:number}
 const KEY='osrah_cart_preview';
 
 function readCart():CartItem[]{
-  try{return JSON.parse(sessionStorage.getItem(KEY)||'[]')}catch{return[]}
+  try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return[]}
 }
 
 function writeCart(items:CartItem[]){
-  sessionStorage.setItem(KEY,JSON.stringify(items));
+  localStorage.setItem(KEY,JSON.stringify(items));
 }
 
 function syncCartBadge(){
@@ -28,13 +28,13 @@ window.addEventListener('osrah:add-pack',((event:Event)=>{
   const index=items.findIndex(item=>item.name===name);
   if(index>=0)items[index].qty+=1;
   else items.push({name,price:detail.price,image:detail.image,category:'Pack OSRAH',qty:1});
+
   writeCart(items);
-  window.setTimeout(syncCartBadge,0);
+  syncCartBadge();
 }) as EventListener);
 
-// Synchronisation légère sans MutationObserver pour éviter une boucle DOM
-// qui pouvait figer la boutique juste après la connexion client.
 document.addEventListener('click',()=>window.setTimeout(syncCartBadge,0),true);
 window.addEventListener('load',()=>window.setTimeout(syncCartBadge,100));
+setTimeout(syncCartBadge,300);
 
 export {};
