@@ -4,14 +4,17 @@ async function toggleAdminPromotion(button: HTMLElement) {
   if (button.dataset.busy === '1') return;
   const id = Number(button.dataset.safePromo);
   if (!id) return;
+
   button.dataset.busy = '1';
   const wasOn = button.classList.contains('on');
-  button.classList.toggle('on', !wasOn);
+  const promotion = !wasOn;
+  button.classList.toggle('on', promotion);
+
   try {
     const get = await fetch(`${PRODUCTS_API}/${id}`);
     if (!get.ok) throw new Error('GET product failed');
     const product = await get.json();
-    const promotion = !wasOn;
+
     const response = await fetch(`${PRODUCTS_API}/${id}`, {
       method: 'PUT',
       headers: {'Content-Type':'application/json'},
@@ -23,10 +26,30 @@ async function toggleAdminPromotion(button: HTMLElement) {
       })
     });
     if (!response.ok) throw new Error('PUT product failed');
-    button.classList.toggle('on', promotion);
+
     const row = button.closest<HTMLElement>('[data-product-row]');
     if (row) row.dataset.promo = promotion ? 'yes' : 'no';
-    setTimeout(() => location.reload(), 180);
+
+    const promoControl = button.closest('.promo-control');
+    if (promoControl) {
+      let badge = promoControl.querySelector<HTMLButtonElement>('.promo-percent');
+      if (promotion && !badge) {
+        badge = document.createElement('button');
+        badge.type = 'button';
+        badge.className = 'promo-percent';
+        badge.dataset.safeDiscount = String(id);
+        badge.textContent = `-${Number(product.discount_percent) || 10}%`;
+        promoControl.appendChild(badge);
+      }
+      if (!promotion && badge) badge.remove();
+    }
+
+    const promoKpi = Array.from(document.querySelectorAll<HTMLElement>('.admin-product-kpis .admin-kpi'))[3];
+    const promoNumber = promoKpi?.querySelector('b');
+    if (promoNumber) {
+      const current = Number(promoNumber.textContent || '0');
+      promoNumber.textContent = String(Math.max(0, current + (promotion ? 1 : -1)));
+    }
   } catch (error) {
     button.classList.toggle('on', wasOn);
     alert('Impossible d’activer la promotion. Vérifiez que le backend est lancé avec: node server/server.js');
@@ -35,8 +58,6 @@ async function toggleAdminPromotion(button: HTMLElement) {
   }
 }
 
-// Dedicated handler registered after the admin script. It prevents older handlers
-// from swallowing the switch click and talks directly to the product API.
 document.addEventListener('pointerup', (event) => {
   const target = event.target as HTMLElement | null;
   const button = target?.closest('[data-safe-promo]') as HTMLElement | null;
