@@ -12,7 +12,7 @@ function hideButtonByText(selector:string,label:string){
 function applyOsrahFinalFixes(){
   const hero=document.querySelector<HTMLImageElement>('.x-hero .visual img');
   if(hero){
-    hero.src='/osrah-hero.jpg?v=4';
+    hero.src='/ChatGPT%20Image%2014%20sept.%202026,%2013_11_27.png?v=1';
     hero.alt='OSRAH Cosmétiques';
     hero.style.objectFit='cover';
     hero.style.objectPosition='center';
